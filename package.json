@@ -1,11 +1,9 @@
 {
   "main": "index.js",
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "web": "expo start --web",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
     "expo": "~39.0.2",
@@ -14,7 +12,8 @@
     "expo-updates": "~0.3.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-native": "~0.63.2",
+    "react-native": "0.63.2",
+    "react-native-ble-manager": "6.7.1",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-screens": "~2.10.1",
