@@ -1,8 +1,15 @@
 import React from "react";
-import BluetoothList from "./app/bluetooth/containers/bluetooth-list";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import BottomStack from "./app/navigation/bottomStack";
+const Stack = createStackNavigator();
 
 const App = () => {
-  return <BluetoothList />;
+  return (
+    <NavigationContainer>
+      <BottomStack />
+    </NavigationContainer>
+  );
 };
 
 export default App;

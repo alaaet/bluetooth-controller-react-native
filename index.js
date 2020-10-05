@@ -1,6 +1,6 @@
 //import { registerRootComponent } from "expo";
 import { AppRegistry } from "react-native";
-import BluetoothList from "./app/bluetooth/containers/bluetooth-list";
+import { name as appName } from "./app.json";
 import App from "./App";
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
@@ -8,4 +8,4 @@ import App from "./App";
 // the environment is set up appropriately
 //registerRootComponent(BluetoothList);
 
-AppRegistry.registerComponent("main", () => BluetoothList);
+AppRegistry.registerComponent(appName, () => App);
