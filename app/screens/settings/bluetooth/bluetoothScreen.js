@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, Button } from "react-native";
+import { FlatList } from "react-native";
 import Layout from "../../../components/bluetooth-list-layout";
 import Empty from "../../../components/empty";
 import Toggle from "../../../components/toggle";

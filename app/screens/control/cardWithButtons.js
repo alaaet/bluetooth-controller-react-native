@@ -5,7 +5,6 @@ import {
   faChevronCircleUp,
   faChevronCircleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { globalStyles } from "../../styles/global";
 import Card from "../../shared/card";
 
 export default function CardWithButtons({ icon }) {

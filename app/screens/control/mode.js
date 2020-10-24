@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Pressable,
-  Text,
-  Button,
-  Switch,
-  StyleSheet,
-} from "react-native";
+import { View, Pressable, Button, Switch, StyleSheet } from "react-native";
 import Separator from "../../components/separator";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faSave, faEdit } from "@fortawesome/free-solid-svg-icons";

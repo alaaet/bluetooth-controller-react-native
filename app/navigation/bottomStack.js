@@ -5,11 +5,9 @@ import Alarms from "../screens/alarms";
 import Beds from "../screens/beds";
 import Co2 from "../screens/co2";
 import Settings from "../screens/settings";
-import HomeStack from "./homeStack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faHome,
   faCog,
   faSort,
   faBell,

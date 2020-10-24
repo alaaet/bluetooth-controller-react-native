@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  View,
-  Pressable,
-  Text,
-  Button,
-  Switch,
-  StyleSheet,
-} from "react-native";
-import { globalStyles } from "../../styles/global";
-import Separator from "../../components/separator";
+import { View, Pressable, Text, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import Alarm from "./alarm";
