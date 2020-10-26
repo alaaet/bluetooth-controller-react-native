@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Image, Pressable, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { globalColors } from "../../styles/global";
+
 import {
   faChevronCircleUp,
   faChevronCircleDown,
@@ -9,7 +11,7 @@ import Card from "../../shared/card";
 
 export default function CardWithButtons({ icon }) {
   return (
-    <Card style={styles.cardWrapper}>
+    <Card style={styles.cardWrapper} bgColor={globalColors.white}>
       <View style={styles.wrapper}>
         <View style={styles.arrowWrapper}>
           <Pressable>
@@ -21,7 +23,7 @@ export default function CardWithButtons({ icon }) {
           </Pressable>
         </View>
         <View style={styles.wrapperCenter}>
-          <Image style={styles.icon} source={icon} />
+          <Image style={styles.icon}source={icon} />
         </View>
         <View style={styles.arrowWrapper}>
           <Pressable>
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   arrow: {
-    color: "#0275d8",
+    color: globalColors.blue,
   },
   wrapperCenter: {
     width: 120,

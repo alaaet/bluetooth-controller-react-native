@@ -1,10 +1,18 @@
 import { StyleSheet } from "react-native";
 
+export const globalColors = 
+{
+  yellow :"#fbc736",
+  blue: "#3C99DC",
+  black:"#000000",
+  white: "#ffffff"
+};
+
 export const globalStyles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: globalColors.yellow,
   },
   paragraph: {
     marginVertical: 8,

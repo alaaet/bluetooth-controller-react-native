@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Pressable, FlatList } from "react-native";
-import { globalStyles } from "../../styles/global";
+import { globalColors, globalStyles } from "../../styles/global";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Bed from "./bed";
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "bold",
-    color: "#0275d8",
+    color: globalColors.black,
   },
   wrapper: {
     flexDirection: "row",
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#0275d8",
+    backgroundColor: globalColors.blue,
     height: 80,
     borderRadius: 30,
     borderWidth: 1,
@@ -75,11 +75,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     maxHeight: 400,
-    backgroundColor: "#0275d8",
+    backgroundColor: globalColors.blue,
     borderRadius: 40,
     borderWidth: 1,
     borderColor: "#fff",
   },
-  reading: { fontSize: 35, color: "white" },
-  plusIcon: { color: "white", marginRight: 10 },
+  reading: { fontSize: 35, color: globalColors.yellow },
+  plusIcon: { color: globalColors.yellow, marginRight: 10 },
 });

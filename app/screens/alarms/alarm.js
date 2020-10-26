@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useState }from "react";
 import {
   View,
   Pressable,
@@ -11,7 +11,12 @@ import Separator from "../../components/separator";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Picker } from "@react-native-community/picker";
+import {globalColors} from "../../styles/global"
+
+
 const Alarm = (props) => {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   return (
     <>
       <View style={styles.wrapper}>
@@ -37,9 +42,11 @@ const Alarm = (props) => {
           <Picker.Item label="Program2" value="pg2" />
         </Picker>
         <Switch
+          trackColor={{ false: globalColors.blue, true: globalColors.blue }}
+          thumbColor={isEnabled ? globalColors.yellow : globalColors.yellow}
           style={styles.switch}
-          value={props.value}
-          onValueChange={props.onValueChange}
+          onValueChange={toggleSwitch}
+          value={isEnabled}
         />
         <Pressable>
           <FontAwesomeIcon icon={faTrashAlt} style={styles.delIcon} size={25} />
@@ -62,7 +69,7 @@ const styles = StyleSheet.create({
   },
   hour: { fontSize: 35 },
   period: { flex: 1, fontSize: 10, color: "grey" },
-  programPicker: { height: 50, width: 140, color: "#5a2e81" },
+  programPicker: { height: 50, width: 140, color: globalColors.blue },
   switch: {
     transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
   },

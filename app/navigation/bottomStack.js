@@ -5,6 +5,8 @@ import Alarms from "../screens/alarms";
 import Beds from "../screens/beds";
 import Co2 from "../screens/co2";
 import Settings from "../screens/settings";
+import Temperature from '../screens/temperature';
+import {globalColors} from '../styles/global';
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -13,13 +15,14 @@ import {
   faBell,
   faBed,
   faWind,
+  faThermometerThreeQuarters
 } from "@fortawesome/free-solid-svg-icons";
 
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomStack = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator activeColor={globalColors.yellow} barStyle={{ backgroundColor: globalColors.blue }}>
       <Tab.Screen
         name="control"
         component={Control}
@@ -73,6 +76,21 @@ const BottomStack = () => {
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon
               icon={faWind}
+              style={style.icon}
+              size={26}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Temperature"
+        component={Temperature}
+        options={{
+          tabBarLabel: "Temp.",
+          tabBarIcon: ({ color }) => (
+            <FontAwesomeIcon
+              icon={faThermometerThreeQuarters}
               style={style.icon}
               size={26}
               color={color}

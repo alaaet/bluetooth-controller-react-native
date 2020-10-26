@@ -8,9 +8,9 @@ export default function Control({ navigation }) {
   return (
     <View style={globalStyles.container}>
       <Text style={styles.title}>Remote Control</Text>
-      <CardWithButtons icon={require("../../icons/Rectangle1.png")} />
-      <CardWithButtons icon={require("../../icons/Rectangle2.png")} />
-      <CardWithButtons icon={require("../../icons/Rectangle3.png")} />
+      <CardWithButtons icon={require("../../icons/Rectangle1-1.png")} />
+      <CardWithButtons icon={require("../../icons/Rectangle2-1.png")} />
+      <CardWithButtons icon={require("../../icons/Rectangle3-1.png")} />
       <View style={globalStyles.container}>
         <Mode name={"Reading Mode"} />
         <Mode name={"Sleep Mode"} />

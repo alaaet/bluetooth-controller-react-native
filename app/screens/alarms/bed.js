@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Alarm from "./alarm";
+import { globalColors } from "../../styles/global";
 const Bed = (props) => {
   return (
     <>
@@ -10,11 +11,13 @@ const Bed = (props) => {
         <View style={styles.wrapper}>
           <Text style={styles.title}>{props.name}</Text>
           <Pressable>
+            <View style={styles.plusIconContainer}> 
             <FontAwesomeIcon
-              icon={faPlusCircle}
+              icon={faPlus}
               style={styles.plusIcon}
-              size={50}
+              size={25}
             />
+            </View>
           </Pressable>
         </View>
         <View style={styles.container}>
@@ -41,9 +44,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
   },
-  plusIcon: {
+  plusIconContainer: {
     marginLeft: 10,
-    color: "#5a2e81",
+    padding:5,
+    backgroundColor: globalColors.blue,
+    borderRadius: 100,
+  },
+  plusIcon: {
+    color: globalColors.yellow,
   },
 });
 export default Bed;

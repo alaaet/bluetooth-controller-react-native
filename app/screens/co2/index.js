@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { globalStyles } from "../../styles/global";
+import { globalColors, globalStyles } from "../../styles/global";
 
 export default function Co2(props) {
   return (
@@ -10,9 +10,9 @@ export default function Co2(props) {
       </View>
       <View style={styles.cardWrapper}>
         <Text style={styles.reading}>Current Reading</Text>
-        <Text style={{ ...styles.reading, color: "orange" }}>15%</Text>
+        <Text style={{ ...styles.reading, color: globalColors.white }}>15%</Text>
         <Text style={styles.reading}>Last Time Reading</Text>
-        <Text style={{ ...styles.reading, color: "orange" }}>10%</Text>
+        <Text style={{ ...styles.reading, color: globalColors.white }}>10%</Text>
       </View>
     </View>
   );
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "bold",
-    color: "#0275d8",
+    color: globalColors.black,
   },
   wrapper: {
     flexDirection: "row",
@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#0275d8",
+    backgroundColor: globalColors.blue,
     height: 300,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
   },
-  reading: { fontSize: 35, color: "white" },
+  reading: { fontSize: 35, color: globalColors.yellow },
 });

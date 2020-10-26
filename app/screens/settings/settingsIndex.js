@@ -1,18 +1,18 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { globalStyles } from "../../styles/global";
+import { StyleSheet, View, Text, TouchableOpacity,Platform } from "react-native";
+import { globalStyles, globalColors } from "../../styles/global";
 import Card from "../../shared/card";
 
 export default function SettingsScreen({ navigation }) {
   return (
     <View style={globalStyles.container}>
       <TouchableOpacity onPress={() => navigation.navigate("Bluetooth")}>
-        <Card>
-          <Text style={globalStyles.titleText}>Bluetooth</Text>
+      <Card bgColor={globalColors.blue}>
+      <Text style={globalStyles.titleText}>Bluetooth</Text>
         </Card>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Help")}>
-        <Card>
+        <Card bgColor={globalColors.blue}>
           <Text style={globalStyles.titleText}>Help Center</Text>
         </Card>
       </TouchableOpacity>
@@ -20,4 +20,9 @@ export default function SettingsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+   
+});
+
+  
+
