@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 50,
+    padding: 20,
     justifyContent: "center",
   },
   btnWrapper: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    maxHeight: 400,
+    maxHeight: 330,
     backgroundColor: globalColors.blue,
     borderRadius: 40,
     borderWidth: 1,

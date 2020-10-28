@@ -1,13 +1,15 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text,ScrollView  } from "react-native";
 import { globalStyles } from "../../styles/global";
 import CardWithButtons from "./cardWithButtons";
 import Mode from "./mode";
 
-export default function Control({ navigation }) {
+
+export default function Control() {
   return (
-    <View style={globalStyles.container}>
-      <Text style={styles.title}>Remote Control</Text>
+    <ScrollView  style={globalStyles.container}>
+      
+      {/* <Text style={styles.title}>Remote Control</Text> */}
       <CardWithButtons icon={require("../../icons/Rectangle1-1.png")} />
       <CardWithButtons icon={require("../../icons/Rectangle2-1.png")} />
       <CardWithButtons icon={require("../../icons/Rectangle3-1.png")} />
@@ -16,7 +18,7 @@ export default function Control({ navigation }) {
         <Mode name={"Sleep Mode"} />
         <Mode name={"Relax Mode"} />
       </View>
-    </View>
+    </ScrollView >
   );
 }
 

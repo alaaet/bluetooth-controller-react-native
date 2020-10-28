@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 
 export const globalColors = 
 {
-  yellow :"#fbc736",
-  blue: "#3C99DC",
+  yellow :"#f9ce40",
+  blue: "#76bae7",
   black:"#000000",
   white: "#ffffff"
 };
