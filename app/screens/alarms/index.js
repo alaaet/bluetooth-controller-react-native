@@ -3,12 +3,14 @@ import { StyleSheet, View, FlatList } from "react-native";
 import { globalStyles } from "../../styles/global";
 import Bed from "./bed";
 import Empty from "../../components/empty";
+import {useTheme} from "../../components/theme/ThemeProvider"  
 const renderEmpty = () => <Empty text="You dont have any beds!" />;
 export default function Alarms() {
+  const {colors, isDark, setScheme} = useTheme();
+  console.log(colors)
   const [list, setList] = useState([
     { id: "1", name: "Bed A" },
-    { id: "2", name: "Bed B" },
-    { id: "3", name: "Bed C" },
+    //{ id: "2", name: "Bed B" },
   ]);
   const renderItem = (item) => {
     return (
@@ -21,7 +23,7 @@ export default function Alarms() {
     );
   };
   return (
-    <View style={globalStyles.container}>
+    <View style={{...globalStyles.container, backgroundColor:colors.background}}>
       <FlatList
         data={list}
         ListEmptyComponent={() => renderEmpty()}
@@ -32,4 +34,6 @@ export default function Alarms() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  
+});

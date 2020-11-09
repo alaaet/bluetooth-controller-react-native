@@ -2,8 +2,10 @@ import React,{useState} from "react";
 import { View, Text,StyleSheet, Switch } from "react-native";
 import { globalColors } from "../../styles/global";
 import Thermometer from "./thermometer";
+import {useTheme} from '../../components/theme/ThemeProvider';
 
 export default function Temperature(props) {
+  const {colors} = useTheme();
   const [degree,setDegree] =useState(100);
 const[isFahrenheit,setIsFahrenheit]=useState(true);
 const toggleSwitch = () => setIsFahrenheit(previousState => !previousState);
@@ -22,6 +24,9 @@ const toggleSwitch = () => setIsFahrenheit(previousState => !previousState);
       justifyContent: "center",
     },
     container:{
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingVertical: 25,
       flexDirection: 'column',
       alignItems:"center",
       justifyContent:"center",
@@ -45,15 +50,15 @@ const toggleSwitch = () => setIsFahrenheit(previousState => !previousState);
     },
   });
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, backgroundColor:colors.background}}>
             <View style={styles.wrapper}>
-        <Text style={styles.title}>Temperature</Text>
+        <Text style={{...styles.title,color:colors.text}}>Temperature</Text>
       </View>
       <Thermometer degree={degree}/>
       <View style={styles.degreeContainer}>
-        <Text style={styles.degree}>{isFahrenheit?((degree* 9/5) + 32)+'\u2109':degree+'\u2103'}</Text>
+        <Text style={{...styles.degree,color:colors.text}}>{isFahrenheit?((degree* 9/5) + 32)+'\u2109':degree+'\u2103'}</Text>
         <View style={styles.switchContainer}>
-        <Text>{'\u2103'}</Text>
+        <Text style={{color:colors.text}}>{'\u2103'}</Text>
         <Switch
          trackColor={{ false: globalColors.blue, true: globalColors.blue }}
          thumbColor={isFahrenheit ? globalColors.yellow : globalColors.yellow}
@@ -61,7 +66,7 @@ const toggleSwitch = () => setIsFahrenheit(previousState => !previousState);
           onValueChange={toggleSwitch}
           value={isFahrenheit}
         />
-        <Text>{'\u2109'}</Text>
+        <Text style={{color:colors.text}}>{'\u2109'}</Text>
         </View>
       </View>    
     </View>

@@ -1,10 +1,12 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import {useTheme} from '../../components/theme/ThemeProvider';
 const Empty = (props) => {
+  const {colors} = useTheme();
   return (
     <View style={styles.container}>
-      <Image style={styles.icon} source={require("../icons/empty.png")} />
-      <Text style={styles.text}>{props.text}</Text>
+      {!props.hideImage&&<Image style={styles.icon} source={require("../icons/empty.png")} />}
+      <Text style={{...styles.text,color:colors.text}}>{props.text}</Text>
     </View>
   );
 };

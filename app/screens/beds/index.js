@@ -4,8 +4,10 @@ import { globalColors, globalStyles } from "../../styles/global";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Bed from "./bed";
+import {useTheme} from '../../components/theme/ThemeProvider';
 
 export default function Beds(props) {
+  const {colors} = useTheme();
   const [list, setList] = useState([
     { id: "1", name: "Bed A" },
     { id: "2", name: "Bed B" },
@@ -24,7 +26,7 @@ export default function Beds(props) {
     );
   };
   return (
-    <View style={globalStyles.container}>
+    <View style={{...globalStyles.container, backgroundColor:colors.background}}>
       <Pressable>
         <View style={styles.btnWrapper}>
           <FontAwesomeIcon icon={faPlus} style={styles.plusIcon} size={50} />
@@ -32,7 +34,7 @@ export default function Beds(props) {
         </View>
       </Pressable>
       <View style={styles.wrapper}>
-        <Text style={styles.title}>BEDS List</Text>
+        <Text style={{...styles.title,color:colors.text}}>BEDS List</Text>
       </View>
       <View style={styles.cardWrapper}>
         <FlatList

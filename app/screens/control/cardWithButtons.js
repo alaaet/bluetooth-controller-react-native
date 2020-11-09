@@ -1,7 +1,9 @@
 import React from "react";
 import { StyleSheet, Image, Pressable, View } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { globalColors } from "../../styles/global";
+import { globalColors,globalStyles } from "../../styles/global";
+import {useTheme} from '../../components/theme/ThemeProvider';
+import Toast from 'react-native-toast-message';
 
 import {
   faChevronCircleUp,
@@ -9,12 +11,25 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Card from "../../shared/card";
 
-export default function CardWithButtons({ icon }) {
+export default function CardWithButtons(props) {
+  const {colors} = useTheme();
+  const Up="up";
+ const Down="down";
+  const Showtoast =  (data,direction) => {
+    //	const {alarmId} = this.state;
+        let icon=direction=='up'?'⬆️':'⬇️';
+        Toast.show({
+          text1: ()=> <Text style={globalStyles.toastText}>'Motor'</Text>,
+          text2: data+' '+'moving'+' '+direction+' '+icon
+        });
+        
+      }
+  
   return (
-    <Card style={styles.cardWrapper} bgColor={globalColors.white}>
+    <Card style={styles.cardWrapper} bgColor={colors.card} >
       <View style={styles.wrapper}>
         <View style={styles.arrowWrapper}>
-          <Pressable>
+          <Pressable onPress={() =>Showtoast(props.message,Up)}>
             <FontAwesomeIcon
               icon={faChevronCircleUp}
               style={styles.arrow}
@@ -23,10 +38,10 @@ export default function CardWithButtons({ icon }) {
           </Pressable>
         </View>
         <View style={styles.wrapperCenter}>
-          <Image style={styles.icon}source={icon} />
+          <Image style={styles.icon}source={props.icon} />
         </View>
         <View style={styles.arrowWrapper}>
-          <Pressable>
+          <Pressable onPress={() =>Showtoast(props.message,Down) }>
             <FontAwesomeIcon
               icon={faChevronCircleDown}
               style={styles.arrow}

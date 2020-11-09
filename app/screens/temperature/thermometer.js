@@ -45,7 +45,7 @@ position:"relative",
           borderTopWidth: 3,
           borderTopColor:"transparent",
           position: "absolute",
-          bottom: 26,
+          bottom: 31,//26
           left: 7.5,
           transform: [{rotate:'180deg'}],
           zIndex: 10,

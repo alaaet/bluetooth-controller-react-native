@@ -1,12 +1,13 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { globalColors, globalStyles } from "../../styles/global";
-
+import {useTheme} from '../../components/theme/ThemeProvider';
 export default function Co2(props) {
+  const {colors} = useTheme();
   return (
-    <View style={globalStyles.container}>
+    <View style={{...globalStyles.container, backgroundColor:colors.background}}>
       <View style={styles.wrapper}>
-        <Text style={styles.title}>CO2 Reading</Text>
+        <Text style={{...styles.title,color:colors.text}}>CO2 Reading</Text>
       </View>
       <View style={styles.cardWrapper}>
         <Text style={styles.reading}>Current Reading</Text>

@@ -1,10 +1,17 @@
 import React from 'react';
 import {View, Text, Switch, StyleSheet} from 'react-native';
+import {useTheme} from './theme/ThemeProvider';
+import {globalColors} from '../styles/global'
+
 const toggle = (props) => {
+  const {colors} = useTheme();
+  const separatorColor = colors.separator;
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{props.value ? 'ON' : 'OFF'}</Text>
+      <Text style={{...styles.text,color:colors.text}}>{props.value ? 'ON' : 'OFF'}</Text>
       <Switch
+      trackColor={{ false: separatorColor, true: globalColors.blue }}
+      thumbColor={props.value ? globalColors.yellow : globalColors.grey}
         style={styles.switch}
         value={props.value}
         onValueChange={props.onValueChange}

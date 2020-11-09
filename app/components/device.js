@@ -1,19 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import Separator from "./separator";
+import {useTheme} from './theme/ThemeProvider';
 const Device = (props) => {
+  const {colors} = useTheme();
   return (
     <>
       <TouchableOpacity style={styles.wrapper} onPress={props.onPress}>
-        <View style={styles.wrapperLeft}>
+        <View style={{...styles.wrapperLeft,background:colors.card}}>
           <Image style={styles.iconLeft} source={props.iconLeft} />
         </View>
         <View style={styles.wrapperName}>
-          <Text style={styles.name}>{props.name}</Text>
+          <Text style={{...styles.name,color:colors.text}}>{props.name}</Text>
         </View>
         <Image style={styles.iconRight} source={props.iconRight} />
       </TouchableOpacity>
-      <Separator />
+      <Separator  color={colors.separator}  />
     </>
   );
 };

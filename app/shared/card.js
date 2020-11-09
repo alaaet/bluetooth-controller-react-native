@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export default function Card(props) {
-  const {bgColor} = props;
+  const {bgColor,mVertical} = props;
   return (
     <View style={styles.card} backgroundColor={bgColor}>
       <View style={styles.cardContent}>{props.children}</View>
@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     marginHorizontal: 18,
-    marginVertical: 20,
+    marginVertical:20
   },
 });

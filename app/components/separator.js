@@ -1,13 +1,18 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+import {useTheme} from './theme/ThemeProvider';
 
 const Separator = (props) => {
+  const {colors} = useTheme();
   return (
     <View
       style={[
         styles.separator,
         {
-          borderColor: props.color ? props.color : '#eceff1',
+          borderColor: colors.separator,
+          marginLeft: props.ml? props.ml : 60,
+          marginRight: props.mr? props.mr:25,
+          flex: props.flex?props.flex:1,
         },
       ]}
     />
@@ -15,10 +20,8 @@ const Separator = (props) => {
 };
 const styles = StyleSheet.create({
   separator: {
-    flex: 1,
+    //flex: 1,
     borderTopWidth: 1,
-    marginLeft: 60,
-    marginRight: 25,
   },
 });
 export default Separator;
