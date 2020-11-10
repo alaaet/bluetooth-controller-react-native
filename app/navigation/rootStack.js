@@ -2,7 +2,7 @@ import React from "react";
 import { Image ,Text,View, StyleSheet} from "react-native";
 import { createStackNavigator, HeaderBackground } from "@react-navigation/stack";
 import BottomStack from "./bottomStack";
-import DeviceView from "../screens/settings/bluetooth/bt-detailed-view";
+//import DeviceView from "../screens/settings/bluetooth/bt-detailed-view";
 import AddAlarm from '../screens/alarms/addAlarm';
 import {useTheme} from '../components/theme/ThemeProvider'
 import EditMode from "../screens/control/editMode";
@@ -18,11 +18,11 @@ const RootStack = () => {
     options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
           backgroundColor:colors.header
            } }}/>
-    <Stack.Screen
+    {/* <Stack.Screen
       name="DeviceView"
       component={DeviceView}
       options={{ title: "Device View" }}
-    />
+    /> */}
      <Stack.Screen
       name="AddAlarm"
       component={AddAlarm}

@@ -35,10 +35,9 @@ const Bed = (props) => {
     const dismissSubscription = RNAlarmEmitter.addListener(
       'OnNotificationDismissed', async(data) => 
       {
-        console.log( data);
         Toast.show({
           text1: 'Alarm',
-          text2: `Alarm(${JSON.parse(data).id})was dismissed! 👋`
+          text2:  `The alarm was dismissed! 👋`
         });
         ReactNativeAN.stopAlarmSound();
       });

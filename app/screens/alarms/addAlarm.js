@@ -13,8 +13,8 @@ import {useTheme} from '../../components/theme/ThemeProvider';
 
 let alarmData = {
 	active:1,
-	title: 'Alarm',
-	message: 'Stand up',
+	title: 'Wake Up',
+	message: 'Mattress is moving!',
 	vibrate: true,
 	play_sound: false,
 	schedule_type: '',
