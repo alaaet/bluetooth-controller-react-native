@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { View, Text,Button, StyleSheet,Switch } from 'react-native'
+import { View, Text, StyleSheet,Switch, Pressable } from 'react-native'
 import DatePicker from 'react-native-date-picker'
 import ReactNativeAN from 'react-native-alarm-notification';
 import { useNavigation } from "@react-navigation/native";
@@ -7,16 +7,15 @@ import AsyncStorage from '@react-native-community/async-storage'
 import CheckBox from "@react-native-community/checkbox"
 import {globalColors} from "../../styles/global"
 import Separator from "../../components/separator";
-import { Picker } from "@react-native-community/picker";
+import {AddAlarmPicker} from "../../shared/picker";
 import Toast from 'react-native-toast-message';
 import {useTheme} from '../../components/theme/ThemeProvider';
-
 let alarmData = {
 	active:1,
 	title: 'Wake Up',
 	message: 'Mattress is moving!',
 	vibrate: true,
-	play_sound: false,
+	play_sound: true,
 	schedule_type: '',
 	channel: 'wakeup',
 	loop_sound: true,
@@ -142,17 +141,10 @@ const AddAlarm = (props) => {
 			</View>
 			<Separator color={separatorColor} ml={1} mr={1}/>
 			<View style={styles.pickerWrapper}>
-				<Text style={{...styles.label,color:colors.text}}>Program: </Text>	
-				<Picker
-				selectedValue={selectedProgram}
-				style={styles.programPicker}
-				onValueChange={(itemValue, itemIndex) => setSelectedProgram(itemValue)}
-				>
-				<Picker.Item label="Program1" value="Program1" />
-				<Picker.Item label="Program2" value="Program2" />
-				<Picker.Item label="Program3" value="Program3" />
-        		<Picker.Item label="Program4" value="Program4" />
-				</Picker>
+				<Text style={{...styles.label,color:colors.text }}>Program: </Text>	
+				
+				    < AddAlarmPicker selectedProgram={selectedProgram} setSelectedProgram={setSelectedProgram} />
+			
 			</View>
 			<Separator color={separatorColor} ml={1} mr={1}/>
 			<View style={styles.mb}>
@@ -161,13 +153,15 @@ const AddAlarm = (props) => {
 					<Switch
 					trackColor={{ false: separatorColor, true: globalColors.blue }}
 					thumbColor={isEnabled ? globalColors.yellow : globalColors.grey}
-						ios_backgroundColor="#3e3e3e"
+						
 						onValueChange={(x)=>toggleSound(x)}
 						value={isEnabled}
 					/>
 				</View>
-			</View>			
-			<Button style={styles.submitBtn} title={'Add'} onPress={()=> setAlarm(alarmData) }></Button>
+			</View>	
+				
+			<Pressable style={styles.button}  onPress={()=> setAlarm(alarmData) }><Text style={styles.btnText}>
+				Add</Text></Pressable>
         </View>
 		
     )
@@ -210,7 +204,7 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-start",
 		paddingLeft:3
 	  },
-	  pickerWrapper:{flexDirection: "row", paddingRight:3, },
+	  pickerWrapper:{flexDirection: "row", paddingRight:3,justifyContent: 'flex-start', alignItems:"center"},
 	  programPicker: { height: 50, width: 140, color: globalColors.blue },
 	  submitBtn:{
 		
@@ -219,8 +213,26 @@ const styles = StyleSheet.create({
 		
 	  },
 	  mb:{
-       marginBottom:30
-	  }
+       marginBottom:20,
+	  },
+	  
+	button: {
+		alignSelf:"center",
+         justifyContent:"center",
+		width: '100%',
+		marginTop: 20,
+		backgroundColor : '#2196f3',
+		padding: 15,
+		borderRadius: 5,
+		marginBottom:10,
+
+	  },
+	  btnText: {
+		color: "white",
+		fontSize: 20,
+		justifyContent: "center",
+		textAlign: "center",
+	  },
 })
 
 export default AddAlarm

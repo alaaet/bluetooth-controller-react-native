@@ -19,7 +19,7 @@ export default function CardWithButtons(props) {
     //	const {alarmId} = this.state;
         let icon=direction=='up'?'⬆️':'⬇️';
         Toast.show({
-          text1: ()=> <Text style={globalStyles.toastText}>'Motor'</Text>,
+          text1:  'Motor',
           text2: data+' '+'moving'+' '+direction+' '+icon
         });
         

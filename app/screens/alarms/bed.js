@@ -26,9 +26,38 @@ const Bed = (props) => {
   const ALARMS_PROGRAMS_STORAGE_KEY = "AlarmsPrograms";
   const { RNAlarmNotification } = NativeModules;
   const RNAlarmEmitter = new NativeEventEmitter(RNAlarmNotification);
+  showPermissions = () => {
+		ReactNativeAN.checkPermissions((permissions) => {
+			console.log(permissions);
+		});
+	};
+
+const Permmissions =()=>{
+
+  if (Platform.OS === 'ios') {
+    showPermissions();
+
+    ReactNativeAN.requestPermissions({
+      alert: true,
+      badge: true,
+      sound: true,
+    }).then(
+      (data) => {
+        console.log('RnAlarmNotification.requestPermissions', data);
+      },
+      (data) => {
+        console.log('RnAlarmNotification.requestPermissions failed', data);
+      },
+    );
+  }
+}
+useEffect(()=>{
+  Permmissions(); 
+},[]);
 
   // First time 
   useEffect(()=>{
+   
      readAlarmsFromStorage() ;
      readAlarmsProgramsFromStorage();  
      readDeactivatedAlarmsFromStorage();
@@ -147,7 +176,8 @@ const Bed = (props) => {
 
   const deleteAlarm = async (id, deleteProgram=false) => {
 		if (id !== '') {
-       await ReactNativeAN.deleteAlarm(id);       
+      const alarmId = parseInt(id, 10);
+       await ReactNativeAN.deleteAlarm(alarmId);       
        if (deleteProgram) setAlarmsPrograms( alarmsPrograms.filter((obj)=>{
         return obj.alarmId != id;
       }))
@@ -176,9 +206,10 @@ const Bed = (props) => {
 
   const deactivateAlarm = async(alarm)=>{
     console.log("Deactivating alarm: ",alarm);
-    await ReactNativeAN.deleteAlarm(alarm.id);
-    setActivatedAlarms(activatedAlarms.filter((item)=>{return alarm.id != item.id}))
-    setDeactivatedAlarms([...deactivatedAlarms,{...alarm,isActive: false}])
+    await ReactNativeAN.deleteAlarm(parseInt(alarm.id, 10));
+    setActivatedAlarms(activatedAlarms.filter((item)=>{
+      return alarm.id != item.id}))
+    setDeactivatedAlarms([...deactivatedAlarms,{...alarm,isActive:false}])
   }
 
   const activateAlarm = async(alarm)=>{
@@ -186,17 +217,24 @@ const Bed = (props) => {
     //console.warn("newDeactivatedAlarms: ",newDeactivatedAlarms)
     setDeactivatedAlarms(newDeactivatedAlarms);
     await AsyncStorage.setItem(Deactivated_ALARMS_STORAGE_KEY,JSON.stringify(newDeactivatedAlarms));
-    alarm.alarmId = null;
-    alarm.id = null;
+    //alarm.alarmId = null;
+    //alarm.id = null;
     console.log("Activating alarm: ",alarm);
     let alarm_date=new Date(alarm.year,alarm.month-1,alarm.day,alarm.hour,alarm.minute,alarm.second);
+    try{
     if( new Date(Date.now())>alarm_date)
     {
       alarm_date.setDate(alarm_date.getDate()+1);
     }
-    alarm.fire_date = ReactNativeAN.parseDate(alarm_date);
-    alarm.id = (await ReactNativeAN.scheduleAlarm(alarm)).id;
-    setActivatedAlarms([...activatedAlarms,{...alarm,isActive: true}])
+   alarm.fire_date = ReactNativeAN.parseDate(alarm_date);
+    console.log("Äctive",alarm);
+    alarm.id= (await ReactNativeAN.scheduleAlarm(alarm)).id;
+    setActivatedAlarms([...activatedAlarms,{alarm,isActive:true}])}
+    catch(e){
+      console.log(e.message);
+    }
+    
+
   }
 
   // PROGRAM FUNCTIONS

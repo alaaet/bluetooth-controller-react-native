@@ -6,13 +6,16 @@ import {
   Text,
   Switch,
   StyleSheet,
+  Platform
 } from "react-native";
 import Separator from "../../components/separator";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { Picker } from "@react-native-community/picker";
 import {globalColors} from "../../styles/global"
 import {useTheme} from '../../components/theme/ThemeProvider';
+import {AlarmPicker} from "../../shared/picker";
+import { color } from "react-native-reanimated";
+
 
 const Alarm = (props) => { 
   const {colors} = useTheme();
@@ -39,21 +42,10 @@ const Alarm = (props) => {
           <View style={styles.periodWrapper}>
             <Text style={{...styles.period,color:colors.period}}>{period}</Text>
           </View>
+         
         </View>
-        <SafeAreaView style={{width:120}}>
-        <Picker
-          selectedValue={program}
-          style={styles.programPicker}
-          itemStyle={{padding:0,margin:0}}
-          onValueChange={(itemValue, itemIndex) =>{
-            setSelectedProgramPicker(itemValue);
-            updateProgram(alarm.id,itemValue);}}
-          >
-        <Picker.Item label="Program1" value="Program1" />
-        <Picker.Item label="Program2" value="Program2" />
-        <Picker.Item label="Program3" value="Program3" />
-        <Picker.Item label="Program4" value="Program4" />
-        </Picker>
+        <SafeAreaView style={styles.safearea}>
+       < AlarmPicker program={program} setSelectedProgramPicker={setSelectedProgramPicker} updateProgram={updateProgram} alarm={alarm}/>
         </SafeAreaView>
         <Switch
           trackColor={{ false: globalColors.Darkgrey, true: globalColors.blue }}
@@ -74,11 +66,14 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:"center",
+    justifyContent:Platform.OS === 'ios' ? "space-between" : 'center',
     padding: 0,
+    marginVertical:Platform.OS === 'ios' ? 3 : 0
+   
   },
   timeWrapper: {
     flexDirection: "row",
+    marginRight: Platform.OS === 'ios' ? 3 : 0
   },
   hour: { fontSize: 35 },
   periodWrapper:{
@@ -88,12 +83,21 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   period: { flex: 1, fontSize: 10,  },
-  programPicker: { height: 50, width: 140, color: globalColors.blue},
+  programPicker: { height: 20, width: 100, color: globalColors.blue},
   switch: {
     transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],marginHorizontal:7
   },
   delIcon: {
     color: "#d9534f",
   },
+  button:{
+    alignItems:"center",
+    justifyContent:"center",
+   marginTop:20
+
+  },
+  safearea:{
+    width: Platform.OS === 'ios' ? 80 :120,
+  }
 });
 export default Alarm;

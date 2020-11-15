@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import { View, Text, TextInput ,StyleSheet,Button} from 'react-native'
+import { View, Text, TextInput ,StyleSheet,Pressable } from 'react-native'
 import {useTheme} from '../../components/theme/ThemeProvider';
 import { useNavigation } from "@react-navigation/native";
 import Separator from "../../components/separator";
@@ -128,7 +128,7 @@ const EditMode = (props) => {
             </Card>
 
            <View style={styles.btnWrapper} >
-                <Button  title={'Save'} onPress={async()=>{
+           <Pressable style={{...styles.button,marginTop:30}} backgroundColor = '#2196f3' onPress={async()=>{
                 const tempModes = currentModes.map( item=>{
                     if (item.id == mode.id)return mode;
                     else return item;});
@@ -136,10 +136,14 @@ const EditMode = (props) => {
                     setCurrentModes(tempModes);
                     await saveModeToStorage(tempModes);
                 navigation.goBack();
-                }}></Button>
+                }}><Text style={styles.btnText}>
+				Save</Text></Pressable>
+
             </View>
             <View style={styles.btnWrapper} >
-                <Button color="red"  title={'Cancel'} onPress={()=>{navigation.goBack();} }></Button>
+
+            <Pressable style={styles.button} backgroundColor = 'red'  onPress={()=>{navigation.goBack();} }><Text style={styles.btnText}>
+				Cancel</Text></Pressable>
             </View>
         </View>
     )
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         paddingVertical:10,
       },    
       btnWrapper: {
-        marginVertical:5,
+        marginVertical: 5
       },
       textInput:{
           fontSize:18
@@ -179,12 +183,28 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
      },
      checkbox: {
-		alignSelf: "center",
+        alignSelf: "center",
+       marginHorizontal:Platform.OS === 'ios' ? 10: 0
       }, 
       motorLabel:{
           marginRight:20,
           
-      }
+      },
+      button: {
+		alignSelf:"center",
+         justifyContent:"center",
+		width: '100%',
+		padding: 15,
+		borderRadius: 5,
+		marginBottom:10,
+
+      },
+      btnText: {
+		color: "white",
+		fontSize: 20,
+		justifyContent: "center",
+		textAlign: "center",
+	  },
 
 });
 
