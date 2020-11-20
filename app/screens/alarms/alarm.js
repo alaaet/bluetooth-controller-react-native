@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 
   },
   safearea:{
-    width: Platform.OS === 'ios' ? 80 :120,
+    width: Platform.OS === 'ios' ?80:120,
   }
 });
 export default Alarm;

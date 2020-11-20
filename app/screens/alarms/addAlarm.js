@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 import {useTheme} from '../../components/theme/ThemeProvider';
 let alarmData = {
 	active:1,
-	title: 'Wake Up',
+	title: 'Smoothly Awake!',
 	message: 'Mattress is moving!',
 	vibrate: true,
 	play_sound: true,
@@ -21,8 +21,10 @@ let alarmData = {
 	loop_sound: true,
 	has_button: true,
 	repeat_interval: '',
+	large_icon:"ic_launcher",
+	sound_name: "argon.mp3",
+	small_icon:"ic_launcher",
 	color:globalColors.blue,
-	sound_name: "argon.mp3"
 };
 
 
@@ -76,10 +78,25 @@ const AddAlarm = (props) => {
 	console.log(`alarm set: ${date}`);
 	if( new Date(Date.now())>new Date(date))
     {
+	let	newdate=new Date(date);
+		newdate.setDate(date.getDate()+1);
+		alarmData.fire_date=ReactNativeAN.parseDate(newdate);
+		try {
+			const alarm = await ReactNativeAN.scheduleAlarm(alarmData);
+			console.log("alarm id: ",alarm.id);
+			 await saveAlarmsProgramsToStorage([...alarmsPrograms,{alarmId:alarm.id,program:selectedProgram}])
+			navigation.goBack();
+		} catch (e) {
+			Toast.show({
+				text1: 'Error😯',
+				text2: e
+			  });
+		}
+		/*
 		Toast.show({
 			text1: 'Error😯',
 			text2: "failed to schedule alarm because fire date is in the past"
-		  });
+		  });*/
     }else{
 	try {
 		const alarm = await ReactNativeAN.scheduleAlarm(alarmData);

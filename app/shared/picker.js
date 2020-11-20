@@ -36,7 +36,7 @@ export  function AlarmPicker(props) {
           onValueChange={(itemValue, itemIndex) =>{
             setSelectedProgramPicker(itemValue);
             updateProgram(parseInt(alarm.id),itemValue);
-          setOpacity(0);}}
+        }}
           >
         <Picker.Item label="Program1" value="Program1" />
         <Picker.Item label="Program2" value="Program2" />
@@ -99,7 +99,7 @@ export function AddAlarmPicker(props) {
   }
 
 const styles = StyleSheet.create({
-    programPicker: { height: 20, width: 100, color: globalColors.blue},
+    programPicker: { height: 20, width: 140, color: globalColors.blue},
     
     programPickerIos: { 
          color:globalColors.blue,

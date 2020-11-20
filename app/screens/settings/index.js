@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./settingsIndex";
 import General from './general'
 import BluetoothList from "./bluetooth/bluetoothScreen";
+import DeviceView from "./bluetooth/bt-detailed-view"
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
@@ -23,7 +24,13 @@ const HomeStack = () => {
         component={General}
         options={{ title: "General Settings" }}
       />
+      <Stack.Screen
+        name="DeviceView"
+        component={DeviceView}
+        options={{ title: "Device View" }}
+      />
     </Stack.Navigator>
+    
   );
 };
 

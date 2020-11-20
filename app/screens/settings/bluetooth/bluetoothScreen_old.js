@@ -35,7 +35,7 @@ function BluetoothList(props) {
       const enable = await BluetoothSerial.requestEnable();
       const list = await BluetoothSerial.list();
       console.log(list);
-      setBolEnable(enable);
+      setBolEnable
       setList(list);
     }
     init();

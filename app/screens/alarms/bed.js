@@ -229,7 +229,7 @@ useEffect(()=>{
    alarm.fire_date = ReactNativeAN.parseDate(alarm_date);
     console.log("Äctive",alarm);
     alarm.id= (await ReactNativeAN.scheduleAlarm(alarm)).id;
-    setActivatedAlarms([...activatedAlarms,{alarm,isActive:true}])}
+    setActivatedAlarms([...activatedAlarms,{...alarm,isActive:true}])}
     catch(e){
       console.log(e.message);
     }
