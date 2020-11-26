@@ -12,6 +12,8 @@ import {
 import Card from "../../shared/card";
 
 export default function CardWithButtons(props) {
+  const {message,icon,btns,handleAction} = props;
+  let timer = null;
   const {colors} = useTheme();
   const Up="up";
  const Down="down";
@@ -24,12 +26,25 @@ export default function CardWithButtons(props) {
         });
         
       }
-  
+      const handleUp =()=>{
+        handleAction(btns[0]);
+        //console.log("UP");
+        timer = setTimeout(handleUp, 100);
+      }
+      const handleDown =()=>{
+        handleAction(btns[1]);
+        //console.log("DOWN");
+        timer = setTimeout(handleDown, 100);
+      }
+    
+      const stopTimer=()=> {
+        clearTimeout(timer);
+      }
   return (
     <Card style={styles.cardWrapper} bgColor={colors.card} >
       <View style={styles.wrapper}>
         <View style={styles.arrowWrapper}>
-          <Pressable onPress={() =>Showtoast(props.message,Up)}>
+          <Pressable onPressIn={(e) =>{handleUp();Showtoast(message,Up)}} onPressOut={(e) =>stopTimer()} onPress={()=>{handleAction(btns[0]);Showtoast(message,Up)}}>
             <FontAwesomeIcon
               icon={faChevronCircleUp}
               style={styles.arrow}
@@ -38,10 +53,10 @@ export default function CardWithButtons(props) {
           </Pressable>
         </View>
         <View style={styles.wrapperCenter}>
-          <Image style={styles.icon}source={props.icon} />
+          <Image style={styles.icon}source={icon} />
         </View>
         <View style={styles.arrowWrapper}>
-          <Pressable onPress={() =>Showtoast(props.message,Down) }>
+          <Pressable onPressIn={() =>{handleDown();Showtoast(message,Down)}} onPressOut={(e) =>stopTimer()} onPress={()=>{handleAction(btns[1]);Showtoast(message,Down)}}>
             <FontAwesomeIcon
               icon={faChevronCircleDown}
               style={styles.arrow}
