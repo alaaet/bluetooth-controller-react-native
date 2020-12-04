@@ -9,7 +9,7 @@ import {
   faChevronCircleUp,
   faChevronCircleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import Card from "../../shared/card";
+import Card from "../../components/card";
 
 export default function CardWithButtons(props) {
   const {message,icon,btns,handleAction} = props;

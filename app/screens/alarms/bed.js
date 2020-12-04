@@ -5,29 +5,25 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Alarm from "./alarm";
 import { useNavigation,useIsFocused } from "@react-navigation/native";
 import { globalColors } from "../../styles/global";
-import ReactNativeAN from 'react-native-alarm-notification';
+import {checkPermissions,requestPermissions,DeleteAlarm,DeactivateAlarm,ActivateAlarm,GetAlarmsFromPhone,UpdateAlarmProgram,stopAlarmSound} from '../../utils/alarmManager';
+import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
 import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-community/async-storage'
 import Empty from "../../components/empty";
+import {readAlarmGroupsFromStorage,saveAlarmGroupsToStorage} from "../../utils/phoneStorage";
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import {useTheme} from '../../components/theme/ThemeProvider';
 
 const Bed = (props) => {
   const {colors} = useTheme();
   const navigation = useNavigation();
-  const [activatedAlarms,setActivatedAlarms] = useState([]);
-  const [deactivatedAlarms,setDeactivatedAlarms] = useState([]);
-  const [alarmsPrograms,setAlarmsPrograms] = useState([]);
   const isFocused = useIsFocused();
+  const [alarmGroups, setAlarmGroups] = useState([]);
   const [deleteCount, setDeleteCount] = useState(0);
   const [updateCount, setUpdateCount] = useState(0);
-  const ALARMS_STORAGE_KEY = "Alarms";
-  const Deactivated_ALARMS_STORAGE_KEY = "DeactivatedAlarms";
-  const ALARMS_PROGRAMS_STORAGE_KEY = "AlarmsPrograms";
   const { RNAlarmNotification } = NativeModules;
   const RNAlarmEmitter = new NativeEventEmitter(RNAlarmNotification);
-  showPermissions = () => {
-		ReactNativeAN.checkPermissions((permissions) => {
+  const showPermissions = () => {
+		checkPermissions((permissions) => {
 			console.log(permissions);
 		});
 	};
@@ -37,7 +33,7 @@ const Permmissions =()=>{
   if (Platform.OS === 'ios') {
     showPermissions();
 
-    ReactNativeAN.requestPermissions({
+    requestPermissions({
       alert: true,
       badge: true,
       sound: true,
@@ -56,11 +52,11 @@ useEffect(()=>{
 },[]);
 
   // First time 
-  useEffect(()=>{
-   
-     readAlarmsFromStorage() ;
-     readAlarmsProgramsFromStorage();  
-     readDeactivatedAlarmsFromStorage();
+  useEffect(()=>{   
+    const init = async()=>{
+      setAlarmGroups(await readAlarmGroupsFromStorage());      
+    }
+    init();
     const dismissSubscription = RNAlarmEmitter.addListener(
       'OnNotificationDismissed', async(data) => 
       {
@@ -68,7 +64,7 @@ useEffect(()=>{
           text1: 'Alarm',
           text2:  `The alarm was dismissed! 👋`
         });
-        ReactNativeAN.stopAlarmSound();
+        stopAlarmSound();
       });
       console.log("Listener was added");
       return(()=>{
@@ -76,114 +72,32 @@ useEffect(()=>{
       });
   },[]);
 
-  // When Alarms change
+  // When Alarm Groups change
   useEffect( ()=>{
-    saveAlarmsToStorage();
-  },[activatedAlarms]);
+    saveAlarmGroupsToStorage(alarmGroups);
+  },[alarmGroups]);
 
-    // When Alarms Programs change
-    useEffect(()=>{
-      saveAlarmsProgramsToStorage();
-    },[alarmsPrograms]);
-
-    // When Deactivated Alarms change
-    useEffect(()=>{
-      saveDeactivatedAlarmsToStorage();
-    },[deactivatedAlarms]);
-
-  // When screen is in focus or an Alarm is deleted
-  useEffect(()=>{
-     getAlarmsFromPhone(); 
-     readAlarmsProgramsFromStorage();
-     readDeactivatedAlarmsFromStorage();  
-    console.log("Activated Alarms: ", activatedAlarms);
-    console.log("Deactivated Alarms: ", deactivatedAlarms);
-    console.log("programs: ",alarmsPrograms);
-  },[isFocused,deleteCount,updateCount]);
-
-
-  // STORAGE FUNCTIONS
-
-  const readAlarmsProgramsFromStorage = async () => {
-    try {
-      const alarmsProgramsFromStorage =JSON.parse( await AsyncStorage.getItem(ALARMS_PROGRAMS_STORAGE_KEY))  
-      if (alarmsProgramsFromStorage !== null) {
-       setAlarmsPrograms(alarmsProgramsFromStorage);
-       console.log("Alarms Programs were read from storage memory!");
-      }
-    } catch (e) {
-     console.log(e.message)
+  // When Alarm is deleted or updated
+  useEffect(()=>{     
+     const init = async()=>{
+      setAlarmGroups(await readAlarmGroupsFromStorage());   
     }
-  }
+    init(); 
+  },[deleteCount,updateCount]);
 
-  const saveAlarmsProgramsToStorage = async () => {
-    try {
-      if(alarmsPrograms.length>0)
-      await AsyncStorage.setItem(ALARMS_PROGRAMS_STORAGE_KEY,JSON.stringify(alarmsPrograms));
-      console.log("Alarms Programs were saved to storage memory!");
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
+  // When screen is in focus
+  useEffect(()=>{     
+    const init = async()=>{
+      await GetAlarmsFromPhone();
+     setAlarmGroups(await readAlarmGroupsFromStorage());   
+   }
+   init(); 
+ },[isFocused]);
 
-  const readAlarmsFromStorage = async () => {
-    try {
-      const alarmsFromStorage =JSON.parse( await AsyncStorage.getItem(ALARMS_STORAGE_KEY))  
-      if (alarmsFromStorage !== null) {
-       setActivatedAlarms(alarmsFromStorage);
-       console.log("Alarms were read from storage memory!");
-      }
-    } catch (e) {
-     console.log(e.message)
-    }
-  }
-
-  const saveAlarmsToStorage = async () => {
-    try {
-      if(activatedAlarms.length>0)
-      await AsyncStorage.setItem(ALARMS_STORAGE_KEY,JSON.stringify(activatedAlarms));
-      console.log("Alarms were saved to storage memory!");
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
-  //Deactivated alarm
-  const readDeactivatedAlarmsFromStorage = async () => {
-    try {
-      const DeactivatedalarmsFromStorage =JSON.parse( await AsyncStorage.getItem(Deactivated_ALARMS_STORAGE_KEY))  
-      if (DeactivatedalarmsFromStorage !== null) {
-        setDeactivatedAlarms(DeactivatedalarmsFromStorage);
-       console.log(" Deactivated Alarms were read from storage memory!");
-      }
-    } catch (e) {
-     console.log(e.message)
-    }
-  }
-
-  const saveDeactivatedAlarmsToStorage = async () => {
-    try {
-      if(deactivatedAlarms.length>0)
-      await AsyncStorage.setItem(Deactivated_ALARMS_STORAGE_KEY,JSON.stringify(deactivatedAlarms));
-      console.log("Alarms were saved to storage memory!");
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
-
-
-
-  // ALARM LIBRARY FUNCTIONS
-
-  const deleteAlarm = async (id, deleteProgram=false) => {
+  const _deleteAlarm = async (id) => {
 		if (id !== '') {
-      const alarmId = parseInt(id, 10);
-       await ReactNativeAN.deleteAlarm(alarmId);       
-       if (deleteProgram) setAlarmsPrograms( alarmsPrograms.filter((obj)=>{
-        return obj.alarmId != id;
-      }))
-      const newDeactivatedAlarms = deactivatedAlarms.filter((item)=>{return id != item.id});    
-      setDeactivatedAlarms(newDeactivatedAlarms);
-      await AsyncStorage.setItem(Deactivated_ALARMS_STORAGE_KEY,JSON.stringify(newDeactivatedAlarms));
+      await DeleteAlarm(id)
+
       setDeleteCount(deleteCount+1);
       Toast.show({
         text1: 'Alarm',
@@ -192,72 +106,11 @@ useEffect(()=>{
 		}
   };
 
-  async function getAlarmsFromPhone(){
-    const list = await ReactNativeAN.getScheduledAlarms();
-    if(list!=null) 
-    {
-      list.forEach(element => {
-        element.isActive = true;
-      });
-      setActivatedAlarms(list);
-      console.log("Alarms were read from phone system!");
-    }
-  }
-
-  const deactivateAlarm = async(alarm)=>{
-    console.log("Deactivating alarm: ",alarm);
-    await ReactNativeAN.deleteAlarm(parseInt(alarm.id, 10));
-    setActivatedAlarms(activatedAlarms.filter((item)=>{
-      return alarm.id != item.id}))
-    setDeactivatedAlarms([...deactivatedAlarms,{...alarm,isActive:false}])
-  }
-
-  const activateAlarm = async(alarm)=>{
-    const newDeactivatedAlarms = deactivatedAlarms.filter((item)=>{return alarm.id != item.id});
-    //console.warn("newDeactivatedAlarms: ",newDeactivatedAlarms)
-    setDeactivatedAlarms(newDeactivatedAlarms);
-    await AsyncStorage.setItem(Deactivated_ALARMS_STORAGE_KEY,JSON.stringify(newDeactivatedAlarms));
-    //alarm.alarmId = null;
-    //alarm.id = null;
-    console.log("Activating alarm: ",alarm);
-    let alarm_date=new Date(alarm.year,alarm.month-1,alarm.day,alarm.hour,alarm.minute,alarm.second);
-    try{
-    if( new Date(Date.now())>alarm_date)
-    {
-      alarm_date.setDate(alarm_date.getDate()+1);
-    }
-   alarm.fire_date = ReactNativeAN.parseDate(alarm_date);
-    console.log("Äctive",alarm);
-    alarm.id= (await ReactNativeAN.scheduleAlarm(alarm)).id;
-    setActivatedAlarms([...activatedAlarms,{...alarm,isActive:true}])}
-    catch(e){
-      console.log(e.message);
-    }
-    
-
-  }
-
-  // PROGRAM FUNCTIONS
-  const updateProgram = (alarmId,program)=>{
-    console.info("alarmId: "+alarmId+", program: "+program);
-
-    setAlarmsPrograms(alarmsPrograms.map((alarmProgram)=>{
-      if(alarmProgram.alarmId==alarmId)alarmProgram.program=program;
-      return alarmProgram;
-    }));
-  } 
-
   // VISUAL FUNCTIONS - needed for rendering
   const renderEmpty = () => <Empty hideImage text="No Alarms yet!" />;
-  const renderItem = (alarm,index) => {
-    let alarmProgram = alarmsPrograms.find((obj)=>{
-      return obj.alarmId == alarm.item.id
-    });
-    alarmProgram=alarmProgram==null?{program:"program4"}:alarmProgram;
-    console.info("alarm id: ",alarm.item.id)
-    console.info("program: ",alarmProgram.program)
+  const renderItem = (alarmGroup,index) => {
     return (
-<Alarm alarm={alarm.item} index={index} deleteAlarm={deleteAlarm} program={alarmProgram.program} updateProgram={updateProgram} deactivateAlarm={deactivateAlarm} activateAlarm={activateAlarm}/>
+<Alarm alarm={alarmGroup.item} index={index} deleteAlarm={_deleteAlarm} program={alarmGroup.program} updateProgram={UpdateAlarmProgram} deactivateAlarm={DeactivateAlarm} activateAlarm={ActivateAlarm}/>
     );
   };
 
@@ -267,7 +120,23 @@ useEffect(()=>{
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <Text style={{...styles.title,color:colors.text}}>{props.name}</Text>
-          <Pressable onPress={() => navigation.navigate('AddAlarm', {alarmsPrograms:alarmsPrograms})}>
+          <Pressable onPress={        
+          async()=>{
+            let deviceID = await getDeviceIdFromStorage();
+            if(deviceID==null)
+            {
+              Toast.show({
+                text1: 'Error😯',
+                text2: 'No controller found, please connect to the controller using Bluetooth!'
+              });
+            }
+            else 
+            {
+              console.log("Device ID: ", deviceID);
+              navigation.navigate('AddAlarm');
+            }
+          }	
+        }>
             <View style={styles.plusIconContainer}> 
             <FontAwesomeIcon
               icon={faPlus}
@@ -279,10 +148,10 @@ useEffect(()=>{
         </View>
         <ScrollView >
         <FlatList
-        data={[...activatedAlarms,...deactivatedAlarms]}
+        data={alarmGroups}
         ListEmptyComponent={() => renderEmpty()}
-        renderItem={( alarm ) => renderItem(alarm)}
-        keyExtractor={(alarm) => `${alarm.id}`}
+        renderItem={( alarmGroup ) => renderItem(alarmGroup)}
+        keyExtractor={(alarmGroup) => alarmGroup.id.toString()}
         contentContainerStyle={styles.listView}
         style={styles.flatListWrapper}
       /></ScrollView>

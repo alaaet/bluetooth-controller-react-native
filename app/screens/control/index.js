@@ -6,13 +6,13 @@ import Mode from "./mode";
 import {useTheme} from '../../components/theme/ThemeProvider';
 import { useIsFocused } from "@react-navigation/native";
 import { globalColors } from "../../styles/global";
-import { BleManager } from "react-native-ble-plx";
 import AsyncStorage from '@react-native-community/async-storage';
+import {sendToPeripheral,createCommandFromString} from "../../utils/bleManager"
 import {decode as atob, encode as btoa} from 'base-64';
 import {
   MOVE_SINGLE_UP, MOVE_SINGLE_DOWN, MOVE_DUAL_HEAD_UP, MOVE_DUAL_HEAD_DOWN, MOVE_DUAL_LEGS_UP, MOVE_DUAL_LEGS_DOWN, MOVE_DUAL_BOTH_UP, MOVE_DUAL_BOTH_DOWN, MOTOR_ONE_ON, MOTOR_ONE_OFF, MOTOR_TWO_ON, MOTOR_TWO_OFF, MOTOR_THREE_ON, MOTOR_THREE_OFF, MOTOR_FOUR_ON, MOTOR_FOUR_OFF, MOTOR_ONE_AND_TWO_ON, MOTOR_ONE_AND_TWO_OFF, MOTOR_THREE_AND_FOUR_ON, MOTOR_THREE_AND_FOUR_OFF, MOTOR_ONE_TWO_THREE_FOUR_OFF
 } from "../../shared/constants";
-import {sendToPeripheral,createCommandFromString} from "../../shared/helpers";
+
 
 const initialModes=[
   {id:"1",name:"Reading Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Up",motor2direction:"Up"},
@@ -21,7 +21,6 @@ const initialModes=[
 ];
 
 export default function Control() {
-  const manager = new BleManager();
   const {colors} = useTheme();
   const Modes_STORAGE_KEY="modes";
   const [currentModes,setCurrentModes] = useState([]);
@@ -130,10 +129,6 @@ useEffect(()=>{
       move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));
     }
   }
-/*
-  if(deviceId!=""){
-    sendToPeripheral(deviceId,hexToBase64("0x40 0x02 0x72 0x00 0x01 0x03 0x32 0x40"));
-  }*/
 },[selectedModeId]);
 
 const moveMotor  = async (movement)=>{
@@ -204,32 +199,8 @@ const moveMotor  = async (movement)=>{
         break;
     }
     const DeviceId =JSON.parse( await AsyncStorage.getItem(DEVICE_STORAGE_KEY))	
-  manager.isDeviceConnected(DeviceId)
-    .then(async(deviceIsConnected)=>{
-      if(deviceIsConnected){
-        await manager.discoverAllServicesAndCharacteristicsForDevice(DeviceId);
-        manager.writeCharacteristicWithResponseForDevice(DeviceId,"FFE0", 'FFE1',base64String)
-        .then((x)=>{
-          console.log("Device is already connected and instruction was executed successfully!");
-        })       
-      }
-      else{          
-        manager.connectToDevice(DeviceId)
-        .then(async(device) => {
-          await device.discoverAllServicesAndCharacteristics();
-          manager.writeCharacteristicWithResponseForDevice(DeviceId,"FFE0", 'FFE1',base64String)
-          .then((x)=>{
-          console.log("connection has been created and instruction was executed successfully!");
-          })
-          .catch((e)=>{
-            //console.error(e)
-          });  
-        })
-        .catch((e)=>{
-          //console.error(e)
-        });
-      }
-  });
+    sendToPeripheral(DeviceId,base64String);
+
 }
 
    const hexToBase64 = (str) =>{

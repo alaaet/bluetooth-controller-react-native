@@ -1,24 +1,27 @@
-let device = null;
-let ble = null;
-let toast = null;
-let localStorage = null;
-let globalization = null;
-let platform = null;
-let navigator = null;
-let intent = null;
-let file = null;
-let fileTransfer = null;
-let crashLytics = null;
-let analytics = null;
-let connection = null;
-let zipper = null;
+const PROGRAMS = [
+    { label: 'Program1', value: 'Program1' },
+    { label: 'Program2', value: 'Program2' },
+    { label: 'Program3', value: 'Program3' },
+    { label: 'Program4', value: 'Program4' },
+];
 
-const BLE_CHAR_VALUE_UID = "A010";
-const BLE_CHAR_EMPTY_UID = "A020";
-const BLE_CHAR_FULL_UID = "A021";
-const BLE_CHAR_WRITE_1 = "A0F0";
-const BLE_CHAR_WRITE_2 = "A0F1";
-const BLE_CHAR_WRITE_3 = "A0F2";
+const FREQUENCIES = [
+    { label: 'Once', value: 'Once' },
+    { label: 'Daily', value: 'Daily' },
+    { label: 'Weekly', value: 'Weekly' },
+    { label: 'Custom', value: 'Custom' },
+];
+
+const WEEKDAYS = [
+    {name:"Monday",dow:1,index:1},
+    {name:"Tuesday",dow:2,index:2},
+    {name:"Wednesday",dow:4,index:3},
+    {name: "Thursday",dow:8,index:4},
+    {name:"Friday",dow:16,index:5},
+    {name:"Saturday",dow:32,index:6},
+    {name:"Sunday",dow:64,index:7}];
+
+
 
 const MOVE_SINGLE_UP = 0;
 const MOVE_SINGLE_DOWN = 1;
@@ -52,50 +55,31 @@ const MOVE_HEAD_BACK = '5';
 const MOVE_THIGH_LOWER_LEG = '6';
 const MOVE_ALL = '7';
 
+// BLE constants
 const BLE_SERVICE = 'FFE0';
 const BLE_CHARACTERISTIC = 'FFE1';
 
-let bleErrors = {
-    NOTCONNECTED: {code: "01", message: "The device is not connected."},
-    COULDNOTSENDDATA: {code: "02", message: "The data transfer to the device was not successful."},
-    COULDNOTREAD: {code:"03", message: "Could not read from device."}
-};
+//Command
+const START='40';
+const END='40';
+const TYPE='02';
+const COMMAND='72';
+const LENGTH1='00' ;
+const LENGTH2='08' ;
+const CHECKSUM='ff';
+const SET_TIME='10';
+const CONTROLLER_PROGRAM='04';
 
-let bleStatuses = {
-    PROCESSING:0, //Used when any ble progress is ongoing
-    CHECKDEVICECONNECTION: 1,
-    FETCHINGFIRMWARE: 2,
-    SENDING: 3,
-    VALIDATING: 4,
-    ERROR: 5,
-    DONE: 6, //Used when any ble progress is ongoing
-};
-
-function initializeConstants(){
-    device = window.device;
-    platform = window.device.platform;
-    ble = window.bluetoothle;
-    toast = window.plugins.toast;
-    localStorage = window.localStorage;
-    globalization = window.navigator.globalization;
-    navigator = window.navigator;
-    intent = window.sendmailIntent;
-    file = window.cordova.file;
-    fileTransfer = window.FileTransfer;
-    crashLytics = window.FirebaseCrashlytics;
-    analytics = window.cordova.plugins.firebase.analytics;
-    connection = window.navigator.connection;
-    zipper = window.zip;
-}
+//Storage keys
+const DEVICE_STORAGE_KEY="Device";
+const ALARM_GROUPS_KEY = "AlarmGroups";
 
 
-export default initializeConstants;
-export {device, ble, toast, localStorage, globalization, platform, navigator, intent, file, fileTransfer, crashLytics, analytics,
-    connection, zipper, BLE_SERVICE, BLE_CHARACTERISTIC,
-    BLE_CHAR_VALUE_UID, BLE_CHAR_EMPTY_UID, BLE_CHAR_FULL_UID, BLE_CHAR_WRITE_1, BLE_CHAR_WRITE_2, BLE_CHAR_WRITE_3,
+export {PROGRAMS, FREQUENCIES, WEEKDAYS, DEVICE_STORAGE_KEY,  ALARM_GROUPS_KEY,
+    BLE_SERVICE, BLE_CHARACTERISTIC,START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,SET_TIME,CONTROLLER_PROGRAM,
     MOVE_SINGLE_UP, MOVE_SINGLE_DOWN, MOVE_DUAL_HEAD_UP, MOVE_DUAL_HEAD_DOWN, MOVE_DUAL_LEGS_UP, MOVE_DUAL_LEGS_DOWN, MOVE_DUAL_BOTH_UP, MOVE_DUAL_BOTH_DOWN, MOVE_ALL_DOWN,
     MOVE_HEAD, MOVE_BACK, MOVE_THIGH, MOVE_LOWER_LEG, MOVE_HEAD_BACK, MOVE_THIGH_LOWER_LEG, MOVE_ALL,
     MOTOR_ONE_ON, MOTOR_ONE_OFF, MOTOR_TWO_ON, MOTOR_TWO_OFF, MOTOR_THREE_ON, MOTOR_THREE_OFF, MOTOR_FOUR_ON, MOTOR_FOUR_OFF,
     MOTOR_ONE_AND_TWO_ON, MOTOR_ONE_AND_TWO_OFF, MOTOR_THREE_AND_FOUR_ON, MOTOR_THREE_AND_FOUR_OFF, MOTOR_ONE_TWO_THREE_FOUR_OFF,
-    bleErrors, bleStatuses
+ 
 };

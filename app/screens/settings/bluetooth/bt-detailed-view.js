@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { globalStyles } from "../../../styles/global";
-import Card from "../../../shared/card";
+import Card from "../../../components/card";
 
 export default function DeviceView({ navigation, route }) {
   const { title, body } = route.params;
