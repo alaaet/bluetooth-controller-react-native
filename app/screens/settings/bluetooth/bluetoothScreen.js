@@ -1,6 +1,6 @@
 import React, {useState, useEffect }   from 'react'
 import { FlatList,Text, View,PermissionsAndroid } from 'react-native'
-import { BleManager } from "react-native-ble-plx"
+import { BleManager ,BleRestoredState} from "react-native-ble-plx"
 import Toggle from "../../../components/toggle";
 import Device from "../../../components/device";
 import { useNavigation } from "@react-navigation/native";
@@ -36,7 +36,7 @@ export async function requestLocationPermission() {
 
  
 const BluetoothScreen = ()=>{
-    const manager = new BleManager()
+    const manager = new BleManager();
     const [info, setInfo] = useState([]);
     const [values, setValue] = useState([]);
     const[bolstate,setBolstate]=useState();
@@ -98,17 +98,13 @@ const BluetoothScreen = ()=>{
 
       
       useEffect(()=>{
-        requestLocationPermission(); 
+        if(Platform.OS === 'android'){
+          requestLocationPermission(); 
+          
+        }
+        
         setBleStatus({emitter:"user",value:true});
-        return () => {
-            if (Platform.OS === 'ios') {
-              manager.onStateChange((state) => {
-                  if (state === 'PoweredOn') scanAndConnect()
-                });
-            } else {
-            // scanAndConnect()
-            }
-        }    
+   
       },[]);
       useEffect(()=>{
         let subscription =manager.onStateChange((state) => {            
@@ -136,46 +132,91 @@ const BluetoothScreen = ()=>{
 
       
    const scanAndConnect=()=> {
-    const permission = requestLocationPermission();
-    if (permission) { 
-        manager.startDeviceScan(null, null, (error, device) => {
+      if(Platform.OS === 'android'){
+      const permission = requestLocationPermission();
+        if(permission){
+          manager.startDeviceScan(null, null, (error, device) => {
+            console.log("Scan:")
+            
+              if(device && device.name){
+                  console.log("DEVICE:",{ device})
+                  const existingDevice = list.find(d => d.id == device.id);
+                  if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
+                  //console.log(error) 
+                  if (device.name === "Mi Band 3" ) {
+              
+                      manager.stopDeviceScan();
+                  /* device.connect()
+                          .then((device) => {
+                              this.info("Discovering services and characteristics");
+                              return device.discoverAllServicesAndCharacteristics()
+                          })
+                          .then((device) => {
+                              this.info(device.id);
+                              device.writeCharacteristicWithResponseForService('12ab', '34cd', 'aGVsbG8gbWlzcyB0YXBweQ==')//Where I use 12ab, insert the UUID of your BLE service. Similarly, where I use 34cd, insert the UUID of your BLE characteristic. Lastly, include a base64 encoding of whatever message you're trying to send where I have aGVsbG8gbWlzcyB0YXBweQ==.
+                              .then((characteristic) => {
+                                  this.info(characteristic.value);
+                                  return 
+                              })
+                          })
+                          .catch((error) => {
+                              this.error(error.message)
+                          })
+                      }
+                  });*/
+                }
           
-            if(device && device.name){
-                console.log("DEVICE:",{ device})
-                const existingDevice = list.find(d => d.id == device.id);
-                if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
-                //console.log(error) 
-                if (device.name === "Mi Band 3" ) {
-            
-                    manager.stopDeviceScan();
-                /* device.connect()
-                        .then((device) => {
-                            this.info("Discovering services and characteristics");
-                            return device.discoverAllServicesAndCharacteristics()
-                        })
-                        .then((device) => {
-                            this.info(device.id);
-                            device.writeCharacteristicWithResponseForService('12ab', '34cd', 'aGVsbG8gbWlzcyB0YXBweQ==')//Where I use 12ab, insert the UUID of your BLE service. Similarly, where I use 34cd, insert the UUID of your BLE characteristic. Lastly, include a base64 encoding of whatever message you're trying to send where I have aGVsbG8gbWlzcyB0YXBweQ==.
-                            .then((characteristic) => {
-                                this.info(characteristic.value);
-                                return 
-                            })
-                        })
-                        .catch((error) => {
-                            this.error(error.message)
-                        })
-                    }
-                });*/
               }
+          
+          
+          
+          });
+              
+
+        }
+    }
+   else{
+    manager.startDeviceScan(null, null, (error, device) => {
+      console.log("Scan:")
+      
+        if(device && device.name){
+            console.log("DEVICE:",{ device})
+            const existingDevice = list.find(d => d.id == device.id);
+            if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
+            //console.log(error) 
+            if (device.name === "Mi Band 3" ) {
         
-            }
+                manager.stopDeviceScan();
+            /* device.connect()
+                    .then((device) => {
+                        this.info("Discovering services and characteristics");
+                        return device.discoverAllServicesAndCharacteristics()
+                    })
+                    .then((device) => {
+                        this.info(device.id);
+                        device.writeCharacteristicWithResponseForService('12ab', '34cd', 'aGVsbG8gbWlzcyB0YXBweQ==')//Where I use 12ab, insert the UUID of your BLE service. Similarly, where I use 34cd, insert the UUID of your BLE characteristic. Lastly, include a base64 encoding of whatever message you're trying to send where I have aGVsbG8gbWlzcyB0YXBweQ==.
+                        .then((characteristic) => {
+                            this.info(characteristic.value);
+                            return 
+                        })
+                    })
+                    .catch((error) => {
+                        this.error(error.message)
+                    })
+                }
+            });*/
+          }
+    
+        }
+    
+    
+    
+    });
         
-        
-        
-        });
-            
+   }
+    
          
-     }
+
        
    
        

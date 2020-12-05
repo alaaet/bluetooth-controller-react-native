@@ -25,11 +25,3 @@ target 'BluetoothController' do
   end
 end
 
-target 'BluetoothController-tvOS' do
-  # Pods for BluetoothController-tvOS
-
-  target 'BluetoothController-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end

@@ -27,6 +27,13 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = BluetoothController;
 		};
+		04658BEC256B1BE400A82633 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04658BE8256B1BE400A82633 /* BleClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D73F06E81D48E17B00AD5963;
+			remoteInfo = BleClient;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +42,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BluetoothControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BluetoothControllerTests.m; sourceTree = "<group>"; };
 		00E8AF926367992128C0E0BE /* libPods-BluetoothController-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BluetoothController-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		04658BE8256B1BE400A82633 /* BleClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleClient.xcodeproj; path = "../node_modules/react-native-ble-plx/ios/BleClient.xcodeproj"; sourceTree = "<group>"; };
 		0493A4249C17363D984E33F6 /* Pods-BluetoothController-BluetoothControllerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluetoothController-BluetoothControllerTests.release.xcconfig"; path = "Target Support Files/Pods-BluetoothController-BluetoothControllerTests/Pods-BluetoothController-BluetoothControllerTests.release.xcconfig"; sourceTree = "<group>"; };
 		04E4E0A1255B0EA200310555 /* empty.mp3 */ = {isa = PBXFileReference; explicitFileType = audio.mp3; path = empty.mp3; sourceTree = "<group>"; };
 		04E4E0A7255B0EBF00310555 /* argon.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = argon.mp3; sourceTree = "<group>"; };
@@ -113,6 +121,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		04658BE9256B1BE400A82633 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04658BED256B1BE400A82633 /* libBleClient.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* BluetoothController */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +147,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04658BE8256B1BE400A82633 /* BleClient.xcodeproj */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				B6E1F35B64D0DD8F74613679 /* libPods-BluetoothController.a */,
@@ -286,6 +303,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 04658BE9256B1BE400A82633 /* Products */;
+					ProjectRef = 04658BE8256B1BE400A82633 /* BleClient.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* BluetoothController */,
@@ -293,6 +316,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		04658BED256B1BE400A82633 /* libBleClient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBleClient.a;
+			remoteRef = 04658BEC256B1BE400A82633 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
