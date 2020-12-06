@@ -120,7 +120,7 @@ export const DeleteAlarm = async (alarmGroupId)=>{
     {
         alarmGroupToBeDeleted.alarms.forEach(async alarm=>{
             const alarmId = parseInt(alarm.id, 10);
-            //console.log("Deleting alarm :",alarm)
+            console.log("Deleting alarm :",alarm.id)
             await ReactNativeAN.deleteAlarm(alarmId);
         });
     }
@@ -143,7 +143,8 @@ export const DeactivateAlarm = async(_alarmGroup)=>{
     if(alarmGroupToBeDeactivated !=null)
     {
         alarmGroupToBeDeactivated.alarms.forEach(async alarm=>{
-            await deleteAlarm(alarm.id);
+            const alarmId = parseInt(alarm.id, 10);
+            await deleteAlarm(alarmId);
         });
     }
     else 
