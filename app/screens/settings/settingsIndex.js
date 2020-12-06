@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity,Switch } from "react-native";
 import { globalStyles, globalColors } from "../../styles/global";
-import Card from "../../shared/card";
+import Card from "../../components/card";
 import {useTheme} from '../../components/theme/ThemeProvider';
 
 
@@ -25,6 +25,11 @@ export default function SettingsScreen({ navigation }) {
       <TouchableOpacity onPress={() => navigation.navigate("General")}>
         <Card bgColor={globalColors.blue}>
           <Text style={globalStyles.titleText}>General Settings</Text>
+        </Card>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("GenerateCommand")}>
+        <Card bgColor={globalColors.blue}>
+          <Text style={globalStyles.titleText}>Manual Command</Text>
         </Card>
       </TouchableOpacity>
       

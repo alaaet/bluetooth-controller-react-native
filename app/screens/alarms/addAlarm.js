@@ -1,17 +1,20 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { View, Text, StyleSheet,Switch, Pressable } from 'react-native'
 import DatePicker from 'react-native-date-picker'
-import ReactNativeAN from 'react-native-alarm-notification';
+import {parseDate, scheduleAlarm,SetAlarm} from '../../utils/alarmManager';
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-community/async-storage'
+import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
 import CheckBox from "@react-native-community/checkbox"
 import {globalColors} from "../../styles/global"
 import Separator from "../../components/separator";
-import {AddAlarmPicker} from "../../shared/picker";
+import {CustomPicker} from "../../components/customPicker";
 import Toast from 'react-native-toast-message';
 import {useTheme} from '../../components/theme/ThemeProvider';
+import {WEEKDAYS,FREQUENCIES,PROGRAMS} from "../../shared/constants";
+
 let alarmData = {
 	active:1,
+	id:0,
 	title: 'Smoothly Awake!',
 	message: 'Mattress is moving!',
 	vibrate: true,
@@ -25,6 +28,7 @@ let alarmData = {
 	sound_name: "argon.mp3",
 	small_icon:"ic_launcher",
 	color:globalColors.blue,
+
 };
 
 
@@ -33,84 +37,87 @@ const AddAlarm = (props) => {
 	const {colors} = useTheme();
 	const navigation = useNavigation();
 	const [selectedProgram, setSelectedProgram] = useState("Program1");
-	const [frequency, setFrequency] = useState(0);
+	const [selectedFrequency, setSelectedFrequency] = useState("Once");
+	const [showWeekDays, setShowWeekDays] = useState(false);
+	const [weekDaysObjs, setWeekDaysObjs] = useState(WEEKDAYS);
+	const [selectedCustomDays, setSelectedCustomDays] = useState([]);
 	const [isEnabled, setIsEnabled] = useState(true);
+	const [deviceId,setDeviceId] = useState(null);
+	const [date, setDate] = useState(new Date(Date.now()))
 	const separatorColor = colors.separator;
 	const alarmsPrograms = props.route.params?.alarmsPrograms;
-	const ALARMS_PROGRAMS_STORAGE_KEY = "AlarmsPrograms";
+
+	useEffect(() => {
+		const init = async()=>{
+			let _deviceID = await getDeviceIdFromStorage();
+			if(_deviceID!=null) setDeviceId(_deviceID);
+		};	
+		init();
+		
+	}, [])
+
+	useEffect(() => {
+		console.log("Selected week days: ", weekDaysObjs.filter(day=>day.isSelected).map(day=>(day.dow)))
+	}, [weekDaysObjs])
+
+	useEffect(() => {
+		console.log("Frequency has changed to: ", selectedFrequency)
+		setShowWeekDays(selectedFrequency == 'Custom')
+	}, [selectedFrequency,selectedCustomDays])
 
 	//ToggelSwitch
 	const toggleSound = (val) => {
 		setIsEnabled(val);
 	}
-	const [date, setDate] = useState(new Date(Date.now()))
+	
    	
-	const saveAlarmsProgramsToStorage = async (programs) => {
-		try {
-		  if(programs.length>0)
-		  await AsyncStorage.setItem(ALARMS_PROGRAMS_STORAGE_KEY,JSON.stringify(programs));
-		  console.log("Alarm Program was added to storage memory!");
-		} catch (e) {
-		  console.warn(e.message)
-		}
-	  }
+
 
 	//Set Alarm
-	const  setAlarm = async () => {
-	alarmData.play_sound=isEnabled;
-	alarmData.sound_name=isEnabled?"argon.mp3":"empty.mp3";
-	alarmData.volume=0.0;
-	console.log("volume "+alarmData.volume)
-     if(frequency>0){
-	alarmData.schedule_type="repeat" ;
-	 }
-	 switch (frequency) {
-		 case 1:
-			alarmData.repeat_interval="daily"
-			 break;
-		case 2:
-			alarmData.repeat_interval="weekly"
-			break;
-		 default:
-			 break;
-	 }
-	alarmData.fire_date=ReactNativeAN.parseDate(date);
-	console.log(`alarm set: ${date}`);
-	if( new Date(Date.now())>new Date(date))
-    {
-	let	newdate=new Date(date);
-		newdate.setDate(date.getDate()+1);
-		alarmData.fire_date=ReactNativeAN.parseDate(newdate);
-		try {
-			const alarm = await ReactNativeAN.scheduleAlarm(alarmData);
-			console.log("alarm id: ",alarm.id);
-			 await saveAlarmsProgramsToStorage([...alarmsPrograms,{alarmId:alarm.id,program:selectedProgram}])
-			navigation.goBack();
-		} catch (e) {
-			Toast.show({
-				text1: 'Error😯',
-				text2: e
-			  });
+	const  ProcessAlarm = async () => {
+		alarmData.play_sound=isEnabled;
+		alarmData.sound_name=isEnabled?"argon.mp3":"empty.mp3";
+		alarmData.volume=0.0;
+		alarmData.frequency = selectedFrequency;
+		alarmData.program = selectedProgram;
+		console.log("volume "+alarmData.volume)
+		if(selectedCustomDays>0){
+		alarmData.schedule_type="repeat" ;
 		}
-		/*
-		Toast.show({
-			text1: 'Error😯',
-			text2: "failed to schedule alarm because fire date is in the past"
-		  });*/
-    }else{
-	try {
-		const alarm = await ReactNativeAN.scheduleAlarm(alarmData);
-		console.log("alarm id: ",alarm.id);
-		 await saveAlarmsProgramsToStorage([...alarmsPrograms,{alarmId:alarm.id,program:selectedProgram}])
-		navigation.goBack();
-	} catch (e) {
-		Toast.show({
-			text1: 'Error😯',
-			text2: e
-		  });
-	}
-}		
-		
+		switch (selectedCustomDays) {
+			case 1:
+				alarmData.repeat_interval="daily"
+				break;
+			case 2:
+				alarmData.repeat_interval="weekly"
+				break;
+			default:
+				break;
+		}
+		alarmData.date = date;
+		alarmData.hour=date.getHours();
+		alarmData.minute=date.getMinutes();
+		alarmData.fire_date=parseDate(date);
+		console.log(`alarm set: ${date}`);
+		if( new Date(Date.now())>new Date(date))
+		{
+		let	newdate=new Date(date);
+			newdate.setDate(date.getDate()+1);
+			alarmData.date = newdate;
+			alarmData.fire_date=parseDate(newdate);
+		}
+			try {
+			let res = await SetAlarm(deviceId,alarmData,weekDaysObjs);
+				if(res!=null)navigation.goBack();
+				else throw new Error('Failed to add a new alarm');
+			} catch (e) 
+			{
+				Toast.show({
+					text1: 'Error😯',
+					text2: e
+				});
+			}
+						
 	};
   
     return (
@@ -125,42 +132,67 @@ const AddAlarm = (props) => {
                 />
 			</View>
 			<Separator color={separatorColor} ml={1} mr={1}/>
-			<View style={styles.daysRow}  >
-				<View style={styles.daysColumn}>
-					<View style={styles.checkboxContainer}>
-					<CheckBox 
-					value={frequency==0}
-					onValueChange={()=>setFrequency(0)}
-					style={styles.checkbox}
-					tintColors={{ true: globalColors.blue, false: colors.text }}
-					/>
-					<Text style={{...styles.label,color:colors.text}}>Only today</Text>
-					</View>
-					<View style={styles.checkboxContainer}>
-					<CheckBox 
-					value={frequency==1}
-					onValueChange={()=>setFrequency(1)}
-					style={styles.checkbox}
-					tintColors={{ true: globalColors.blue, false: colors.text }}
-					/>
-					<Text style={{...styles.label,color:colors.text}}>Daily</Text>
-					</View>
-					<View style={styles.checkboxContainer}>
-					<CheckBox 
-					value={frequency==2}
-					onValueChange={()=>setFrequency(2)}
-					style={styles.checkbox}
-					tintColors={{ true: globalColors.blue, false: colors.text }}
-					/>
-					<Text style={{...styles.label,color:colors.text}}>Weekly</Text>
-					</View>
-				</View>
+			<View style={styles.pickerWrapper}>
+				<Text style={{...styles.label,color:colors.text }}>Frequency: </Text>	
+				
+				    < CustomPicker selectedOption={selectedFrequency} setSelectedOption={setSelectedFrequency} options={FREQUENCIES}/>
+			
 			</View>
+			{showWeekDays&&<View style={styles.daysRow}  >
+				<View style={styles.daysColumn}>
+				{WEEKDAYS.map((day,index)=>{if(index<4)
+				return(
+					<View style={styles.checkboxContainer} key={index.toString()}>
+						<CheckBox 	
+						disabled={false}					
+						onValueChange={(val)=>{
+							let days = [];
+							weekDaysObjs.forEach(dayObj=>{
+							if(dayObj.name==day.name)
+							{ dayObj.isSelected=val;
+							}
+							days.push(dayObj);
+						}
+						)
+						setWeekDaysObjs(days)}}
+						value={weekDaysObjs.find(element => element.name == day.name)?.isSelected}
+						style={styles.checkbox}
+						tintColors={{ true: globalColors.blue, false: colors.text }}
+						/>
+						<Text style={{...styles.label,color:colors.text}}>{day.name}</Text>
+					</View>
+				)})}					
+				</View>
+				<View style={styles.daysColumn}>
+				{weekDaysObjs.map((day,index)=>{if(index>=4)
+				return(
+					<View style={styles.checkboxContainer} key={index.toString()}>
+						<CheckBox 	
+						disabled={false}					
+						onValueChange={(val)=>{
+							let days = [];
+							weekDaysObjs.forEach(dayObj=>{
+							if(dayObj.name==day.name)
+							{ dayObj.isSelected=val;
+							}
+							days.push(dayObj);
+						}
+						)
+						setWeekDaysObjs(days)}}
+						value={weekDaysObjs.find(element => element.name == day.name)?.isSelected}
+						style={styles.checkbox}
+						tintColors={{ true: globalColors.blue, false: colors.text }}
+						/>
+						<Text style={{...styles.label,color:colors.text}}>{day.name}</Text>
+					</View>
+				)})}					
+				</View>
+			</View>}
 			<Separator color={separatorColor} ml={1} mr={1}/>
 			<View style={styles.pickerWrapper}>
 				<Text style={{...styles.label,color:colors.text }}>Program: </Text>	
 				
-				    < AddAlarmPicker selectedProgram={selectedProgram} setSelectedProgram={setSelectedProgram} />
+				    < CustomPicker selectedOption={selectedProgram} setSelectedOption={setSelectedProgram} options={PROGRAMS}/>
 			
 			</View>
 			<Separator color={separatorColor} ml={1} mr={1}/>
@@ -177,10 +209,9 @@ const AddAlarm = (props) => {
 				</View>
 			</View>	
 				
-			<Pressable style={styles.button}  onPress={()=> setAlarm(alarmData) }><Text style={styles.btnText}>
+			<Pressable style={styles.button}  onPress={()=> ProcessAlarm(alarmData) }><Text style={styles.btnText}>
 				Add</Text></Pressable>
-        </View>
-		
+        </View>		
     )
 }
 
@@ -250,6 +281,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		textAlign: "center",
 	  },
-})
+});
 
 export default AddAlarm

@@ -144,6 +144,12 @@ android {
         }
     }
     signingConfigs {
+    debug {
+      storeFile file('BluetoothController.keystore')
+      storePassword 'AmirShereen@123'
+      keyAlias 'BluetoothController'
+      keyPassword 'AmirShereen@123'
+        }
     release {
       storeFile file('BluetoothController.keystore')
       storePassword 'AmirShereen@123'

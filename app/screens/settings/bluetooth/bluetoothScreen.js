@@ -1,28 +1,31 @@
 import React, {useState, useEffect }   from 'react'
-import { FlatList,Text, View,PermissionsAndroid } from 'react-native'
-import { BleManager ,BleRestoredState} from "react-native-ble-plx"
+import { FlatList, View,PermissionsAndroid, Platform } from 'react-native'
+import { BleManager } from "react-native-ble-plx";
 import Toggle from "../../../components/toggle";
 import Device from "../../../components/device";
-import { useNavigation } from "@react-navigation/native";
+import {useIsFocused } from "@react-navigation/native";
 import {globalStyles} from '../../../styles/global';
 import {useTheme} from '../../../components/theme/ThemeProvider';
 import Layout from "../../../components/bluetooth-list-layout";
 import Empty from "../../../components/empty";
 import Subtitle from "../../../components/subtitle";
+import AsyncStorage from '@react-native-community/async-storage'
+import Toast from 'react-native-toast-message';
+import {sendToPeripheral,hexToBase64,decimalToHex} from "../../../utils/bleManager";
+import{START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,SET_TIME,DEVICE_STORAGE_KEY} from '../../../shared/constants'
 export async function requestLocationPermission() {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION, {
-          title: 'Location permission for bluetooth scanning',
-          message: 'wahtever',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      ); 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Location permission for bluetooth scanning granted');
-        
+      let result = await PermissionsAndroid.requestMultiple([PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION])
+      let granted = true;
+      console.log("RESULT OF PERMISSION: ", result);
+      Object.entries(result).forEach(([key, value]) => {
+        if(value!== PermissionsAndroid.RESULTS.GRANTED)
+        {
+          granted = false;
+        }
+      });
+      if (granted) {
+        console.log('Location permission for bluetooth scanning granted');        
         return true;
       } else {
         console.log('Location permission for bluetooth scanning revoked');
@@ -38,15 +41,87 @@ export async function requestLocationPermission() {
 const BluetoothScreen = ()=>{
     const manager = new BleManager();
     const [info, setInfo] = useState([]);
-    const [values, setValue] = useState([]);
-    const[bolstate,setBolstate]=useState();
     const [bleStatus, setBleStatus] = useState({emitter:"",value:false});
     const [bleDevicePrevState, setBleDevicePrevState] = useState("");
     const {colors} = useTheme();
-    const navigation = useNavigation();
     const [list, setList] = useState([]);
+    const [deviceId,setDeviceID] = useState([]);
+ 
+    const isFocused = useIsFocused();
+
+    // Save Devices
+    const saveDeviceIdToStorage = async () => {
+      try {
+        if(deviceId.length>0)
+        await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(deviceId));
+        console.log("Device ID were saved to storage memory!",deviceId);
+      } catch (e) {
+        console.log(e.message)
+      }
+    }
+    //Read Devices
+    const readDeviceIdFromStorage = async () => {
+      try {
+        const DeviceIdFromStorage =JSON.parse( await AsyncStorage.getItem(DEVICE_STORAGE_KEY))  
+        if (DeviceIdFromStorage!== null) {
+          setDeviceID(DeviceIdFromStorage);
+         console.log(" Device Id were read from storage memory!",DeviceIdFromStorage);
+        }
+      } catch (e) {
+       console.log(e.message)
+      }
+    }
     
-    
+    const handleConnect=async(deviceId)=>{
+      await manager.connectToDevice(deviceId)
+      .then(async(device) => {
+          //setInfo("Discovering services and characteristics");
+            let date=new Date(Date.now());
+            let year=decimalToHex(date.getFullYear()%2000);
+            let month=decimalToHex((date.getMonth())+1);
+            let Dow=decimalToHex(date.getDay())
+            let day=decimalToHex(date.getDate());
+            let hour=decimalToHex(date.getHours());
+            let minute=decimalToHex(date.getMinutes());
+            let seconds=decimalToHex(date.getSeconds());
+            var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
+            await sendToPeripheral(deviceId,base64String);
+      
+         
+          Toast.show({
+            text1: 'Controller',
+            text2: "The controller is connected, and the Time has been reset.   👋"
+            });
+          return device.discoverAllServicesAndCharacteristics()
+      }).catch(async(e)=>{
+        // TRY AGAIN
+        await manager.connectToDevice(deviceId)
+      .then(async(device) => {
+        let date=new Date(Date.now());
+        let year=decimalToHex(date.getFullYear()%2000);
+        let month=decimalToHex((date.getMonth())+1);
+        let Dow=decimalToHex(date.getDay())
+        let day=decimalToHex(date.getDate());
+        let hour=decimalToHex(date.getHours());
+        let minute=decimalToHex(date.getMinutes());
+        let seconds=decimalToHex(date.getSeconds());
+        var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
+        await sendToPeripheral(deviceId,base64String);
+
+          Toast.show({
+            text1: 'Controller',
+            text2: "The controller is connected, and the Time has been reset.   👋"
+            });
+          return device.discoverAllServicesAndCharacteristics()
+      }).catch((e)=>{
+        console.error("CONNECTION ERROR:",e)
+        Toast.show({
+          text1: 'Controller',
+          text2: e+" 👋"
+          });
+      });
+      });
+    }
     const renderEmpty = () => <Empty text="This page is clean" />;
     
     const renderItem = (item) => {
@@ -54,15 +129,22 @@ const BluetoothScreen = ()=>{
         <Device 
           {...item}
           iconLeft={require("../../../icons/bt-device.png")}
-          iconRight={require("../../../icons/gear.png")}
+         // iconRight={require("../../../icons/connect.png")}
           onPress={() => {
+            handleConnect(item.id)
             console.log(item);
-            navigation.navigate("DeviceView", { title: item.name, body:item.id });
+
+          //  navigation.navigate("DeviceView", { title: item.name, body:item.id });
           }}
         />
       );
     };
-  
+    useEffect( ()=>{
+      saveDeviceIdToStorage();
+    },[deviceId]);
+    useEffect( ()=>{
+      readDeviceIdFromStorage();
+    },[isFocused]);
     useEffect(()=>{
         switch (bleStatus.emitter) {
             case 'user':
@@ -98,11 +180,8 @@ const BluetoothScreen = ()=>{
 
       
       useEffect(()=>{
-        if(Platform.OS === 'android'){
-          requestLocationPermission(); 
-          
-        }
-        
+        const init = async()=>{await requestLocationPermission();}
+         init();
         setBleStatus({emitter:"user",value:true});
    
       },[]);
@@ -131,96 +210,50 @@ const BluetoothScreen = ()=>{
       },[ bleDevicePrevState]);
 
       
-   const scanAndConnect=()=> {
-      if(Platform.OS === 'android'){
-      const permission = requestLocationPermission();
-        if(permission){
-          manager.startDeviceScan(null, null, (error, device) => {
-            console.log("Scan:")
-            
-              if(device && device.name){
-                  console.log("DEVICE:",{ device})
-                  const existingDevice = list.find(d => d.id == device.id);
-                  if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
-                  //console.log(error) 
-                  if (device.name === "Mi Band 3" ) {
-              
-                      manager.stopDeviceScan();
-                  /* device.connect()
-                          .then((device) => {
-                              this.info("Discovering services and characteristics");
-                              return device.discoverAllServicesAndCharacteristics()
-                          })
-                          .then((device) => {
-                              this.info(device.id);
-                              device.writeCharacteristicWithResponseForService('12ab', '34cd', 'aGVsbG8gbWlzcyB0YXBweQ==')//Where I use 12ab, insert the UUID of your BLE service. Similarly, where I use 34cd, insert the UUID of your BLE characteristic. Lastly, include a base64 encoding of whatever message you're trying to send where I have aGVsbG8gbWlzcyB0YXBweQ==.
-                              .then((characteristic) => {
-                                  this.info(characteristic.value);
-                                  return 
-                              })
-                          })
-                          .catch((error) => {
-                              this.error(error.message)
-                          })
-                      }
-                  });*/
-                }
-          
-              }
-          
-          
-          
-          });
-              
-
-        }
+  const scanAndConnect=async()=> {
+     console.log("SCANNING...")
+    const permission = await requestLocationPermission();
+    if(Platform.OS=='android'){
+      if (permission) 
+      { 
+        manager.startDeviceScan (null, null, async(error, device) => 
+        {
+          console.log("DEVICE:",device)
+          if(error) console.log("ERROR:",error)
+            if(device && device.name)
+            {                
+              const existingDevice = list.find(d => d.id == device.id);
+              if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
+              //console.log(error) 
+              if (device.name === "OCTO2" ) 
+              {
+                await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
+                manager.stopDeviceScan();
+              }        
+            }
+        });
+      }     
     }
-   else{
-    manager.startDeviceScan(null, null, (error, device) => {
-      console.log("Scan:")
-      
-        if(device && device.name){
-            console.log("DEVICE:",{ device})
+    else{
+      manager.startDeviceScan (null, null, async(error, device) => 
+      {
+        console.log("DEVICE:",device)
+        if(error) console.log("ERROR:",error)
+          if(device && device.name)
+          {                
             const existingDevice = list.find(d => d.id == device.id);
             if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
             //console.log(error) 
-            if (device.name === "Mi Band 3" ) {
-        
-                manager.stopDeviceScan();
-            /* device.connect()
-                    .then((device) => {
-                        this.info("Discovering services and characteristics");
-                        return device.discoverAllServicesAndCharacteristics()
-                    })
-                    .then((device) => {
-                        this.info(device.id);
-                        device.writeCharacteristicWithResponseForService('12ab', '34cd', 'aGVsbG8gbWlzcyB0YXBweQ==')//Where I use 12ab, insert the UUID of your BLE service. Similarly, where I use 34cd, insert the UUID of your BLE characteristic. Lastly, include a base64 encoding of whatever message you're trying to send where I have aGVsbG8gbWlzcyB0YXBweQ==.
-                        .then((characteristic) => {
-                            this.info(characteristic.value);
-                            return 
-                        })
-                    })
-                    .catch((error) => {
-                        this.error(error.message)
-                    })
-                }
-            });*/
+            if (device.name === "OCTO2" ) 
+            {
+              await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
+              manager.stopDeviceScan();
+            }        
           }
-    
-        }
-    
-    
-    
-    });
-        
-   }
-    
-         
+      });
+    }
 
-       
-   
-       
-      }
+  }
     return (
         <View style={{...globalStyles.container, backgroundColor:colors.background}} >
     <Layout title="Bluetooth">

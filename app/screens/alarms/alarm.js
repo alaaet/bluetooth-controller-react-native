@@ -13,19 +13,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import {globalColors} from "../../styles/global"
 import {useTheme} from '../../components/theme/ThemeProvider';
-import {AlarmPicker} from "../../shared/picker";
-import { color } from "react-native-reanimated";
+import {CustomPicker} from "../../components/customPicker";
+import { PROGRAMS } from "../../shared/constants";
+import{checkControllerIsConnected}from '../../utils/bleManager'
 
-
-const Alarm = (props) => { 
+const Alarm = ({alarm,deleteAlarm,program,updateProgram,deactivateAlarm,activateAlarm}) => { 
+console.log("programe:",alarm.program)
   const {colors} = useTheme();
-  const {alarm,deleteAlarm,program,updateProgram,deactivateAlarm,activateAlarm} = props;
   const [isEnabled, setIsEnabled] = useState(alarm.isActive);
   const [isRepeated, setIsRepeated] = useState(alarm.scheduleType!=="once");
-  const [selectedProgramPicker, setSelectedProgramPicker] = useState(program);
+  const [selectedProgram, setSelectedProgram] = useState(alarm.program);
   const period = alarm.hour>12?"pm":"am";
   let hour = (period=="pm"?alarm.hour-12:alarm.hour);  
   const label = (hour<10?"0"+hour:hour)+ ":"+(alarm.minute<10?"0"+alarm.minute:alarm.minute);
+  console.log("Label",label);
+  useEffect(() => {
+    updateProgram(parseInt(alarm.id),selectedProgram)
+  }, [selectedProgram])
 
   const toggleSwitch = async(val) => {
     setIsEnabled(val);
@@ -33,7 +37,7 @@ const Alarm = (props) => {
     else activateAlarm(alarm);
   };  
 
-
+  
   return (
     <>
       <View style={styles.wrapper}>
@@ -45,16 +49,21 @@ const Alarm = (props) => {
          
         </View>
         <SafeAreaView style={styles.safearea}>
-       < AlarmPicker program={program} setSelectedProgramPicker={setSelectedProgramPicker} updateProgram={updateProgram} alarm={alarm}/>
+       < CustomPicker selectedOption={selectedProgram} setSelectedOption={ setSelectedProgram}options={PROGRAMS}/>
         </SafeAreaView>
         <Switch
           trackColor={{ false: globalColors.Darkgrey, true: globalColors.blue }}
           thumbColor={isEnabled? globalColors.yellow : globalColors.yellow}
           style={styles.switch}
-          onValueChange={(x)=>toggleSwitch(x)}
+          onValueChange={(x)=>{
+           if(checkControllerIsConnected())
+           toggleSwitch(x)}}
           value={isEnabled}
         />
-        <Pressable onPress={() =>deleteAlarm(alarm.id)}>
+       
+        <Pressable onPress={()=>{
+           if(checkControllerIsConnected())
+           deleteAlarm(alarm.id)}}>
           <FontAwesomeIcon icon={faTrashAlt} style={styles.delIcon} size={25} />
         </Pressable>
       </View>

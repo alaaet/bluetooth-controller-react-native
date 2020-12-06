@@ -3,7 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./settingsIndex";
 import General from './general'
 import BluetoothList from "./bluetooth/bluetoothScreen";
-import DeviceView from "./bluetooth/bt-detailed-view"
+import DeviceView from "./bluetooth/bt-detailed-view";
+import GenerateCommand from './bluetooth/manualCommand'
 const Stack = createStackNavigator();
 
 const HomeStack = () => {
@@ -28,6 +29,11 @@ const HomeStack = () => {
         name="DeviceView"
         component={DeviceView}
         options={{ title: "Device View" }}
+      />
+       <Stack.Screen
+        name="GenerateCommand"
+        component={GenerateCommand}
+        options={{ title: "Manual Command" }}
       />
     </Stack.Navigator>
     

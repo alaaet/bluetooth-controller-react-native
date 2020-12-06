@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import Separator from "../../components/separator";
 import {globalColors} from "../../styles/global"
 import { Slider } from 'react-native-elements';
-import Card from "../../shared/card";
+import Card from "../../components/card";
 import CheckBox from "@react-native-community/checkbox";
 import AsyncStorage from '@react-native-community/async-storage';
 
