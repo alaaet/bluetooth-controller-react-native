@@ -223,9 +223,9 @@ const BluetoothScreen = ()=>{
             if(device && device.name)
             {                
               const existingDevice = list.find(d => d.id == device.id);
-              if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
+              if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
               //console.log(error) 
-              if (device.name === "OCTO2" ) 
+              if (device.name.toLowerCase().includes("octo")) 
               {
                 await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
                 manager.stopDeviceScan();
@@ -242,9 +242,9 @@ const BluetoothScreen = ()=>{
           if(device && device.name)
           {                
             const existingDevice = list.find(d => d.id == device.id);
-            if(existingDevice==null) setList([...list,{name:device.name,id:device.id}]);
+            if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
             //console.log(error) 
-            if (device.name === "OCTO2" ) 
+            if (device.name.toLowerCase().includes("octo") ) 
             {
               await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
               manager.stopDeviceScan();
