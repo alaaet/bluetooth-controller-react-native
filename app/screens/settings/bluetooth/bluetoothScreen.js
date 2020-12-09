@@ -1,4 +1,4 @@
-import React, {useState, useEffect }   from 'react'
+import React, {useState, useEffect,useRef }   from 'react'
 import { FlatList, View,PermissionsAndroid, Platform } from 'react-native'
 import { BleManager } from "react-native-ble-plx";
 import Toggle from "../../../components/toggle";
@@ -32,7 +32,7 @@ export async function requestLocationPermission() {
         return false;
       }
     } catch (err) {
-      console.warn(err);
+      console.log(err);
       return false;
     }
   }
@@ -44,9 +44,8 @@ const BluetoothScreen = ()=>{
     const [bleStatus, setBleStatus] = useState({emitter:"",value:false});
     const [bleDevicePrevState, setBleDevicePrevState] = useState("");
     const {colors} = useTheme();
-    const [list, setList] = useState([]);
-    const [deviceId,setDeviceID] = useState([]);
- 
+    const [devicesList, setDevicesList] = useState([]);
+    const [deviceId,setDeviceID] = useState([]); 
     const isFocused = useIsFocused();
 
     // Save Devices
@@ -128,6 +127,7 @@ const BluetoothScreen = ()=>{
     const renderEmpty = () => <Empty text="This page is clean" />;
     
     const renderItem = (item) => {
+      console.log('item',item)
       return (
         <Device 
           {...item}
@@ -145,6 +145,7 @@ const BluetoothScreen = ()=>{
     useEffect( ()=>{
       saveDeviceIdToStorage();
     },[deviceId]);
+ 
     useEffect( ()=>{
       readDeviceIdFromStorage();
     },[isFocused]);
@@ -159,7 +160,7 @@ const BluetoothScreen = ()=>{
                 else
                 {
                     manager.stopDeviceScan();
-                    setList([]);
+                    setDevicesList([]);
                     manager.disable();
                     //setTimeout(() => {manager.disable(); }, 3000);     
                }
@@ -173,7 +174,7 @@ const BluetoothScreen = ()=>{
                 else 
                 {
                     manager.stopDeviceScan();
-                    setList([]);
+                    setDevicesList([]);
                 }
                 break;
             default:                
@@ -190,6 +191,7 @@ const BluetoothScreen = ()=>{
    
       },[]);
       useEffect(()=>{
+        if(Platform.OS=='android'){
         let subscription =manager.onStateChange((state) => {            
             if(state != bleDevicePrevState){
             console.log("BLE STATUS CHANGE BY DEVICE: "+state)
@@ -210,7 +212,8 @@ const BluetoothScreen = ()=>{
                 break;
             }}
         }); 
-        return(()=>{subscription.remove();});      
+        return(()=>{subscription.remove();}); 
+      }     
       },[ bleDevicePrevState]);
 
       
@@ -221,55 +224,49 @@ const BluetoothScreen = ()=>{
       const permission = await requestLocationPermission();
       if (permission) 
       { 
-       await manager.startDeviceScan (null, null, async(error, device) => 
+        manager.startDeviceScan (null, null, async(error, device) => 
         {
-          console.log("DEVICE:",device)
+          console.log("DEVICE:",device.name)
           if(error) console.log("ERROR:",error)
-            if(device && device.name)
+            if(device && device.name && device.name.toLowerCase().includes("octo"))
             {                
-              const existingDevice = list.find(d => d.id == device.id);
-              if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
-              //console.log(error) 
-              if (device.name.toLowerCase().includes("octo")) 
-              {               
-                manager.stopDeviceScan();
-              }        
+              setDevicesList(devicesList=>([...devicesList.filter(d => d.id !== device.id),{name:device.name,id:device.id}]))
             }
         });
-      }     
+        setTimeout(() => { 
+          manager.stopDeviceScan();
+      }, 8000);
+    }
     }
     else{
-      await manager.startDeviceScan (null, null, async(error, device) => 
-      {
-        console.log("DEVICE:",device)
-        if(error) console.log("ERROR:",error)
-          if(device && device.name)
-          {                
-            const existingDevice = list.find(d => d.id == device.id);
-            if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
-            //console.log(error) 
-            if (device.name.toLowerCase().includes("octo") ) 
-            {              
-              manager.stopDeviceScan();
-            }        
-          }
-      });
+      manager.startDeviceScan (null, null, async(error, device) => 
+        {
+          console.log("DEVICE:",device.name)
+          if(error) console.log("ERROR:",error)
+            if(device && device.name && device.name.toLowerCase().includes("octo"))
+            {                
+              setDevicesList(devicesList=>([...devicesList.filter(d => d.id !== device.id),{name:device.name,id:device.id}]))
+            }
+        });
+        setTimeout(() => { 
+          manager.stopDeviceScan();
+      }, 8000);
     }
 
   }
     return (
         <View style={{...globalStyles.container, backgroundColor:colors.background}} >
     <Layout title="Bluetooth">
-      <Toggle value={bleStatus.value} onValueChange={(val)=>{
+      {Platform.OS=='android'&&<Toggle value={bleStatus.value} onValueChange={(val)=>{
           setBleStatus({emitter:"user",value:val}); 
           console.log("TOGGLE SWITCHED BY USER: ", val);
-          }} />
+          }} />}
       <Subtitle title="Devices List" />
       <FlatList 
-        data={list}
+        data={devicesList}
         ListEmptyComponent={() => renderEmpty()}
-        renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => item.id}
+        renderItem={(item) => renderItem(item.item)}
+        keyExtractor={(item,index) => index.toString()}
       />
     </Layout>
     </View>
