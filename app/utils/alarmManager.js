@@ -1,5 +1,5 @@
 import ReactNativeAN from 'react-native-alarm-notification';
-import {WEEKDAYS,FREQUENCIES,START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,CONTROLLER_PROGRAM} from '../shared/constants';
+import {WEEKDAYS,FREQUENCIES,PROGRAMS,START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,CONTROLLER_PROGRAM} from '../shared/constants';
 import {saveAlarmGroupsToStorage,readAlarmGroupsFromStorage,getDeviceIdFromStorage} from './phoneStorage';
 import {sendToPeripheral,decimalToHex,hexToBase64} from './bleManager';
 
@@ -7,6 +7,7 @@ import {sendToPeripheral,decimalToHex,hexToBase64} from './bleManager';
 export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
     //console.log("alarmData",alarmData);
     let alarmDate= alarmData.date;
+    let scenario;
     let alarmGroups = await readAlarmGroupsFromStorage();
     const count = alarmGroups.length;
     let newAlarmGroup = {id:alarmGroups.length,type:alarmData.frequency,program:alarmData.program,isActive:true,hour:alarmData.hour,minute:alarmData.minute,alarms:[]};
@@ -21,6 +22,28 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
         }
         return copy;
     }
+    switch(alarmData.program){
+        case PROGRAMS[0].value:
+            scenario='00';
+            break;
+        case PROGRAMS[1].value:
+            scenario='01';
+            break;
+        case PROGRAMS[2].value:
+            scenario='02';
+            break;
+        case PROGRAMS[3].value:
+            scenario='03';
+            break;
+        case PROGRAMS[4].value:
+            scenario='04';
+            break;
+        default:
+            break;
+
+
+    }
+
     switch (alarmData.frequency) {
         case FREQUENCIES[0].value: // ONCE
             alarmData.schedule_type="once"
@@ -105,7 +128,7 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
     }
     //console.log("alarmGroups",newAlarmGroup)
     // SEND ALARM TO CONTROLLER
-    await sendAlarmToController(deviceId,alarmData,day);
+    await sendAlarmToController(deviceId,alarmData,day,scenario);
     // SAVE TO STORAGE
     await saveAlarmGroupsToStorage([...alarmGroups,newAlarmGroup]);
     //console.log("alarmGroups",alarmGroups)
@@ -221,7 +244,7 @@ export const UpdateAlarmProgram = async(alarmGroupId, program)=>{
 /**HELPERS */
 
 	//set alarm controller
-	const sendAlarmToController=async(deviceId,alarm,day)=>{
+	const sendAlarmToController=async(deviceId,alarm,day,scenario)=>{
         console.log("FIRE_DATE IS: ",alarm.fire_date)
 		//const controlDate=  (alarm.fire_date).split(" ")[1];
 		//let hour =parseInt(controlDate.split(":")[0]) ;
@@ -230,7 +253,7 @@ export const UpdateAlarmProgram = async(alarmGroupId, program)=>{
         let minute = alarm.minute;
 		let hexHour=decimalToHex(hour);
 		let hexminute=decimalToHex(minute);		
-		var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+CONTROLLER_PROGRAM+day+hexHour+hexminute+END); 
+		var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+scenario+day+hexHour+hexminute+END); 
 		await sendToPeripheral(deviceId,base64String);
     }
     

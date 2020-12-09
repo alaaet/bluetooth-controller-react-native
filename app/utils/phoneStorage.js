@@ -1,13 +1,16 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import {DEVICE_STORAGE_KEY, ALARM_GROUPS_KEY} from "../../shared/constants";
-
+import Toast from 'react-native-toast-message';
 
     const getDeviceIdFromStorage = async()=>{
       try{
         return JSON.parse( await AsyncStorage.getItem(DEVICE_STORAGE_KEY));
       }
       catch (e){
-        return null;
+        Toast.show({
+          text1: 'Error😯',
+          text2: 'No controller found, please connect to the controller using Bluetooth!'
+        });
       }
     }
 

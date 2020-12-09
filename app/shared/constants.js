@@ -3,6 +3,7 @@ const PROGRAMS = [
     { label: 'Program2', value: 'Program2' },
     { label: 'Program3', value: 'Program3' },
     { label: 'Program4', value: 'Program4' },
+    { label: 'Program5', value: 'Program5' },
 ];
 
 const FREQUENCIES = [

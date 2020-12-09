@@ -72,55 +72,58 @@ const BluetoothScreen = ()=>{
       }
     }
     
-    const handleConnect=async(deviceId)=>{
-      await manager.connectToDevice(deviceId)
-      .then(async(device) => {
-          //setInfo("Discovering services and characteristics");
-            let date=new Date(Date.now());
-            let year=decimalToHex(date.getFullYear()%2000);
-            let month=decimalToHex((date.getMonth())+1);
-            let Dow=decimalToHex(date.getDay())
-            let day=decimalToHex(date.getDate());
-            let hour=decimalToHex(date.getHours());
-            let minute=decimalToHex(date.getMinutes());
-            let seconds=decimalToHex(date.getSeconds());
-            var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
-            await sendToPeripheral(deviceId,base64String);
-      
-         
-          Toast.show({
-            text1: 'Controller',
-            text2: "The controller is connected, and the Time has been reset.   👋"
-            });
-          return device.discoverAllServicesAndCharacteristics()
-      }).catch(async(e)=>{
-        // TRY AGAIN
+    const handleConnect=async(deviceId,Name)=>{
+      if (Name.toLowerCase().includes("octo") ) {
+        await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(deviceId));                 
         await manager.connectToDevice(deviceId)
-      .then(async(device) => {
-        let date=new Date(Date.now());
-        let year=decimalToHex(date.getFullYear()%2000);
-        let month=decimalToHex((date.getMonth())+1);
-        let Dow=decimalToHex(date.getDay())
-        let day=decimalToHex(date.getDate());
-        let hour=decimalToHex(date.getHours());
-        let minute=decimalToHex(date.getMinutes());
-        let seconds=decimalToHex(date.getSeconds());
-        var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
-        await sendToPeripheral(deviceId,base64String);
+        .then(async(device) => {
+            //setInfo("Discovering services and characteristics");
+              let date=new Date(Date.now());
+              let year=decimalToHex(date.getFullYear()%2000);
+              let month=decimalToHex((date.getMonth())+1);
+              let Dow=decimalToHex(date.getDay())
+              let day=decimalToHex(date.getDate());
+              let hour=decimalToHex(date.getHours());
+              let minute=decimalToHex(date.getMinutes());
+              let seconds=decimalToHex(date.getSeconds());
+              var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
+              await sendToPeripheral(deviceId,base64String);
+        
+          
+            Toast.show({
+              text1: 'Controller',
+              text2: "The controller is connected, and the Time has been reset.   👋"
+              });
+            return device.discoverAllServicesAndCharacteristics()
+        }).catch(async(e)=>{
+          // TRY AGAIN
+          await manager.connectToDevice(deviceId)
+        .then(async(device) => {
+          let date=new Date(Date.now());
+          let year=decimalToHex(date.getFullYear()%2000);
+          let month=decimalToHex((date.getMonth())+1);
+          let Dow=decimalToHex(date.getDay())
+          let day=decimalToHex(date.getDate());
+          let hour=decimalToHex(date.getHours());
+          let minute=decimalToHex(date.getMinutes());
+          let seconds=decimalToHex(date.getSeconds());
+          var base64String =hexToBase64(START+TYPE+COMMAND+LENGTH1+LENGTH2+CHECKSUM+SET_TIME+seconds+minute+hour+Dow+day+month+year+END);
+          await sendToPeripheral(deviceId,base64String);
 
+            Toast.show({
+              text1: 'Controller',
+              text2: "The controller is connected, and the Time has been reset.   👋"
+              });
+            return device.discoverAllServicesAndCharacteristics()
+        }).catch((e)=>{
+          console.error("CONNECTION ERROR:",e)
           Toast.show({
             text1: 'Controller',
-            text2: "The controller is connected, and the Time has been reset.   👋"
+            text2: e+" 👋"
             });
-          return device.discoverAllServicesAndCharacteristics()
-      }).catch((e)=>{
-        console.error("CONNECTION ERROR:",e)
-        Toast.show({
-          text1: 'Controller',
-          text2: e+" 👋"
-          });
-      });
-      });
+        });
+        });
+      }
     }
     const renderEmpty = () => <Empty text="This page is clean" />;
     
@@ -131,7 +134,7 @@ const BluetoothScreen = ()=>{
           iconLeft={require("../../../icons/bt-device.png")}
          // iconRight={require("../../../icons/connect.png")}
           onPress={() => {
-            handleConnect(item.id)
+            handleConnect(item.id,item.name)
             console.log(item);
 
           //  navigation.navigate("DeviceView", { title: item.name, body:item.id });
@@ -181,7 +184,8 @@ const BluetoothScreen = ()=>{
       
       useEffect(()=>{
         const init = async()=>{await requestLocationPermission();}
-         init();
+        if(Platform.OS=='android') {
+          init();}
         setBleStatus({emitter:"user",value:true});
    
       },[]);
@@ -212,11 +216,12 @@ const BluetoothScreen = ()=>{
       
   const scanAndConnect=async()=> {
      console.log("SCANNING...")
-    const permission = await requestLocationPermission();
+   
     if(Platform.OS=='android'){
+      const permission = await requestLocationPermission();
       if (permission) 
       { 
-        manager.startDeviceScan (null, null, async(error, device) => 
+       await manager.startDeviceScan (null, null, async(error, device) => 
         {
           console.log("DEVICE:",device)
           if(error) console.log("ERROR:",error)
@@ -226,8 +231,7 @@ const BluetoothScreen = ()=>{
               if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
               //console.log(error) 
               if (device.name.toLowerCase().includes("octo")) 
-              {
-                await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
+              {               
                 manager.stopDeviceScan();
               }        
             }
@@ -235,7 +239,7 @@ const BluetoothScreen = ()=>{
       }     
     }
     else{
-      manager.startDeviceScan (null, null, async(error, device) => 
+      await manager.startDeviceScan (null, null, async(error, device) => 
       {
         console.log("DEVICE:",device)
         if(error) console.log("ERROR:",error)
@@ -245,8 +249,7 @@ const BluetoothScreen = ()=>{
             if(existingDevice==null && device.name.toLowerCase().includes("octo")) setList([...list,{name:device.name,id:device.id}]);
             //console.log(error) 
             if (device.name.toLowerCase().includes("octo") ) 
-            {
-              await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(device.id));                 
+            {              
               manager.stopDeviceScan();
             }        
           }
