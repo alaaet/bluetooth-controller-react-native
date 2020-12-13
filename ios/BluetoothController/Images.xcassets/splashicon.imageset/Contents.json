@@ -1,8 +1,7 @@
 {
   "images" : [
     {
-      "compression-type" : "automatic",
-      "filename" : "splash_icon.png",
+      "filename" : "splashicon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
