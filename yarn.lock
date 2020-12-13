@@ -8940,7 +8940,7 @@
   dependencies:
     "read" "1"
 
-"prop-types@15.7.2":
+"prop-types@^15.6.2", "prop-types@15.7.2":
   "integrity" "sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ=="
   "resolved" "https://registry.npmjs.org/prop-types/-/prop-types-15.7.2.tgz"
   "version" "15.7.2"
@@ -9138,6 +9138,13 @@
   "integrity" "sha512-dd4IubwGu6CZoDMrZoSUb0zGmb/bSOXkB+5sYxKhaHANjem/9yPx6mifaLM13M+DJ6P+PNoLn0bPKItTYzsZiA=="
   "resolved" "https://registry.npmjs.org/react-native-ble-plx/-/react-native-ble-plx-2.0.1.tgz"
   "version" "2.0.1"
+
+"react-native-collapsible@^1.5.3":
+  "integrity" "sha512-Ciuy3yF8wcHeLxXFtx9vxoyrq8l+9EJqLM/ADw54gVwzTQc1/e2ojhQbVFPlxhDA+Pba2qezkaKfv5ifxg8hoQ=="
+  "resolved" "https://registry.npmjs.org/react-native-collapsible/-/react-native-collapsible-1.5.3.tgz"
+  "version" "1.5.3"
+  dependencies:
+    "prop-types" "^15.6.2"
 
 "react-native-date-picker@^3.2.5":
   "integrity" "sha512-OKIqx3ZSUsp7XWcfuiWouIfIyW+CK48kG8HC2ZzLm8bSrsruSo/+McIybZ7NYuIAgDB9z5omK18EA1oOZgITxA=="
@@ -9342,7 +9349,7 @@
     "use-subscription" "1.4.1"
     "whatwg-fetch" "3.4.1"
 
-"react-native@0.63.2":
+"react-native@*", "react-native@0.63.2":
   "integrity" "sha512-MkxHeJorUDzmQwKJrTfrFYMDRLyu9GSBpsFFMDX7X+HglVnaZi3CTzW2mRv1eIcazoseBOP2eJe+bnkyLl8Y2A=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.63.2.tgz"
   "version" "0.63.2"
@@ -9395,7 +9402,7 @@
   "resolved" "https://registry.npmjs.org/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz"
   "version" "0.13.4"
 
-"react@16.13.1":
+"react@*", "react@16.13.1":
   "integrity" "sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w=="
   "resolved" "https://registry.npmjs.org/react/-/react-16.13.1.tgz"
   "version" "16.13.1"

@@ -7,6 +7,8 @@ import { globalColors } from "../../styles/global";
 import {useTheme} from '../../components/theme/ThemeProvider';
 import { useNavigation } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
+import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
+
 
 const Mode = (props) => {
   const {item,setSelectedModeId,selectedModeId} = props;
@@ -18,19 +20,49 @@ const Mode = (props) => {
         <View style={{...styles.btnWrapper,backgroundColor:item.id==selectedModeId?"#6993b5":globalColors.blue}}>
         <Pressable
           style={styles.button}
-          onPress={()=>{
+          onPress={async(e)=>{
+            let deviceID = await getDeviceIdFromStorage();
+            if(deviceID==null)
+            {
+              
+              Toast.show({
+                text1: 'Error😯',
+                text2: 'No controller found, please connect to the controller using Bluetooth!'
+              });
+              navigation.navigate('Bluetooth');
+            }
+            else 
+            {
             setSelectedModeId(item.id);
             Toast.show({
               text1: 'Mode Alert:',
               text2: 'Selected Mode is: '+item.name+`👋` 
             });
-          }}
+            }
+          
+        }}
           
         >
           <Text style={styles.btnText}>{item.name}</Text>
         </Pressable>
         </View>
-        <Pressable style={{...styles.wrapper,marginRight:6}} onPress={() => navigation.navigate('EditMode', {item:item})}>
+        <Pressable style={{...styles.wrapper,marginRight:6}} onPress={
+          async(e)=>{
+            let deviceID = await getDeviceIdFromStorage();
+            if(deviceID==null)
+            {
+              
+              Toast.show({
+                text1: 'Error😯',
+                text2: 'No controller found, please connect to the controller using Bluetooth!'
+              });
+              navigation.navigate('Bluetooth');
+            }
+            else 
+            {
+              navigation.navigate('EditMode', {item:item})
+            }
+          }	}>
           <FontAwesomeIcon icon={faEdit} style={styles.icon} size={30} />
         </Pressable>
       </View>

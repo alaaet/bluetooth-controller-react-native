@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { globalColors,globalStyles } from "../../styles/global";
 import {useTheme} from '../../components/theme/ThemeProvider';
 import Toast from 'react-native-toast-message';
+import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   faChevronCircleUp,
@@ -15,6 +17,7 @@ export default function CardWithButtons(props) {
   const {message,icon,btns,handleAction} = props;
   let timer = null;
   const {colors} = useTheme();
+  const navigation = useNavigation();
   const Up="up";
  const Down="down";
   const Showtoast =  (data,direction) => {
@@ -28,6 +31,7 @@ export default function CardWithButtons(props) {
       }
       const handleUp =()=>{
         handleAction(btns[0]);
+
         //console.log("UP");
         timer = setTimeout(handleUp, 100);
       }
@@ -44,7 +48,44 @@ export default function CardWithButtons(props) {
     <Card style={styles.cardWrapper} bgColor={colors.card} >
       <View style={styles.wrapper}>
         <View style={styles.arrowWrapper}>
-          <Pressable onPressIn={(e) =>{handleUp();Showtoast(message,Up)}} onPressOut={(e) =>stopTimer()} onPress={()=>{handleAction(btns[0]);Showtoast(message,Up)}}>
+          <Pressable onPressIn={async(e)=>{
+            let deviceID = await getDeviceIdFromStorage();
+            if(deviceID==null)
+            {
+              
+              Toast.show({
+                text1: 'Error😯',
+                text2: 'No controller found, please connect to the controller using Bluetooth!'
+              });
+              navigation.navigate('Bluetooth');
+            }
+            else 
+            {
+              handleUp();
+              Showtoast(message,Up);
+            }
+          }	}
+          onPressOut={(e) =>stopTimer()} 
+          onPress={
+            async(e)=>{
+              let deviceID = await getDeviceIdFromStorage();
+              if(deviceID==null)
+              {
+                
+                Toast.show({
+                  text1: 'Error😯',
+                  text2: 'No controller found, please connect to the controller using Bluetooth!'
+                });
+                navigation.navigate('Bluetooth');
+              }
+              else 
+              {
+                handleAction(btns[0]);
+                Showtoast(message,Up);
+              }
+              }
+            }
+            >
             <FontAwesomeIcon
               icon={faChevronCircleUp}
               style={styles.arrow}

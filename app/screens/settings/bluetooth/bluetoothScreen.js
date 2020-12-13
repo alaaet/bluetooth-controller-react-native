@@ -186,8 +186,8 @@ const BluetoothScreen = ()=>{
       useEffect(()=>{
         const init = async()=>{await requestLocationPermission();}
         if(Platform.OS=='android') {
-          init();}
-        setBleStatus({emitter:"user",value:true});
+          init();
+        setBleStatus({emitter:"user",value:true});}
    
       },[]);
       useEffect(()=>{

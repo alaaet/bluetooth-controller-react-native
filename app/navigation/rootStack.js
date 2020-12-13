@@ -6,6 +6,12 @@ import BottomStack from "./bottomStack";
 import AddAlarm from '../screens/alarms/addAlarm';
 import {useTheme} from '../components/theme/ThemeProvider'
 import EditMode from "../screens/control/editMode";
+import BluetoothScreen from '../screens/settings/bluetooth/bluetoothScreen';
+import General from '../screens/settings/general';
+import GenerateCommand from '../screens/settings/bluetooth/manualCommand';
+import Help from '../screens/settings/help';
+
+
 const Stack = createStackNavigator();
 
 const RootStack = () => {
@@ -37,6 +43,31 @@ const RootStack = () => {
         backgroundColor:colors.header        
          },headerTintColor:colors.text  }}
     />
+      <Stack.Screen
+        name="Bluetooth"
+        component={BluetoothScreen}
+        options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
+          backgroundColor:colors.header
+           } }}/>
+        <Stack.Screen
+        name="General"
+        component={General}
+        options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
+          backgroundColor:colors.header
+           } }}/>
+           <Stack.Screen
+        name="GenerateCommand"
+        component={GenerateCommand}
+        options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
+          backgroundColor:colors.header
+           } }}/>
+      <Stack.Screen
+        name="Help"
+        component={Help}
+        options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
+          backgroundColor:colors.header
+           } }}/>
+   
   </Stack.Navigator>
 )};
 

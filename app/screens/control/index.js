@@ -211,9 +211,10 @@ const moveMotor  = async (movement)=>{
 
   return (
     <ScrollView   style={{...globalStyles.container, backgroundColor:colors.background}}>      
-      <CardWithButtons icon={require("../../icons/Rectangle1-1.png") } message={" Leg & Back"} handleAction={moveMotor} btns={[MOVE_DUAL_BOTH_UP,MOVE_DUAL_BOTH_DOWN]}/>
-      <CardWithButtons icon={require("../../icons/Rectangle2-1.png")} message={" Leg"} handleAction={moveMotor} btns={[MOVE_DUAL_LEGS_UP,MOVE_DUAL_LEGS_DOWN]}/>
       <CardWithButtons icon={require("../../icons/Rectangle3-1.png")} message={" Back"} handleAction={moveMotor} btns={[MOVE_DUAL_HEAD_UP,MOVE_DUAL_HEAD_DOWN]}/>
+      <CardWithButtons icon={require("../../icons/Rectangle2-1.png")} message={" Leg"} handleAction={moveMotor} btns={[MOVE_DUAL_LEGS_UP,MOVE_DUAL_LEGS_DOWN]}/>
+      <CardWithButtons icon={require("../../icons/Rectangle1-1.png") } message={" Leg & Back"} handleAction={moveMotor} btns={[MOVE_DUAL_BOTH_UP,MOVE_DUAL_BOTH_DOWN]}/>
+      
       <Text style={{...styles.title,color:colors.text}}>Modes</Text>
       <View style={{...globalStyles.container, backgroundColor:colors.card}}>
         {currentModes.map((item,index)=>(<Mode item={item} key={index} selectedModeId={selectedModeId} setSelectedModeId={setSelectedModeId}/>))}

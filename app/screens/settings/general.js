@@ -44,19 +44,30 @@ function  General () {
  }
 
   return (
-    <View style={{...globalStyles.container, backgroundColor:colors.background }}>   
-    <Pressable style={styles.button}  onPress={()=>SetTime()} ><Text style={styles.btnText}>
-				Reset Controller Time</Text></Pressable> 
-      <Text style={{...globalStyles.titleText,color:colors.text}}>Theme
-      </Text>
-      <Separator color={separatorColor} ml={1} mr={1}/>
-      <View style={styles.switchWrapper}>
-        <Switch 
-        trackColor={{ false: globalColors.blue, true: globalColors.blue }}
-        thumbColor={isDark ? globalColors.yellow : globalColors.yellow}
-        value={isDark} onValueChange={toggleScheme}/> 
-        <View style={{...styles.messagecontainer, borderColor: colors.primary , borderColor: colors.primary}}>
-            <Text style={{...styles.messagestyle, color: colors.text, }}>{text}</Text>
+    <View style={{...globalStyles.container, backgroundColor:colors.background ,flex:4}}> 
+      <View style={styles.content}>
+        <Text style={{...globalStyles.titleText,color:colors.text}}>Controller Time
+        </Text>
+        <Separator color={separatorColor} ml={1} mr={1}/>
+
+          <View style={{flex:4}}>
+            <Pressable style={styles.button}  onPress={()=>SetTime()} ><Text style={styles.btnText}>
+              Reset Controller Time</Text></Pressable>
+              </View>
+        </View>  
+    
+      <View style={styles.content}>
+        <Text style={{...globalStyles.titleText,color:colors.text}}>Theme
+        </Text>
+        <Separator color={separatorColor} ml={1} mr={1}/>
+        <View style={styles.switchWrapper}>
+          <Switch 
+          trackColor={{ false: globalColors.blue, true: globalColors.blue }}
+          thumbColor={isDark ? globalColors.yellow : globalColors.yellow}
+          value={isDark} onValueChange={toggleScheme}/> 
+          <View style={{...styles.messagecontainer, borderColor: colors.primary , borderColor: colors.primary}}>
+              <Text style={{...styles.messagestyle, color: colors.text, }}>{text}</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -64,15 +75,7 @@ function  General () {
 };
 
 const styles = StyleSheet.create({  
-  soundsList: {
-    backgroundColor: 'white',
-  },
-  soundText: {
-    fontSize: 18,
-    paddingVertical: 4,
-    fontWeight: '400',
-    color: globalColors.blue,  
-  },
+
   wrapper:{
     flex:4,
     justifyContent: 'center',
@@ -93,21 +96,27 @@ const styles = StyleSheet.create({
   },
   button: {
 		alignSelf:"center",
-         justifyContent:"center",
+         justifyContent:'flex-start',
 		width: '100%',
 		marginTop: 20,
 		backgroundColor : '#2196f3',
 		padding: 15,
 		borderRadius: 5,
-		marginBottom:10,
-
+    marginBottom:10,
+    
+     
+    
 	  },
 	  btnText: {
 		color: "white",
 		fontSize: 20,
 		justifyContent: "center",
 		textAlign: "center",
-	  },
+    },
+    content:{
+      marginVertical:20,
+      flex:2
+    }
 });
 
 export default General;

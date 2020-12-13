@@ -3,13 +3,13 @@ import { StyleSheet, View, Text, TouchableOpacity,Switch } from "react-native";
 import { globalStyles, globalColors } from "../../styles/global";
 import Card from "../../components/card";
 import {useTheme} from '../../components/theme/ThemeProvider';
+import { useNavigation } from "@react-navigation/native";
 
 
 
-
-export default function SettingsScreen({ navigation }) {
+export default function SettingsScreen() {
   const {colors} = useTheme();
-
+  const navigation = useNavigation();
   return (
     <View style={{...styles.containerStyle, backgroundColor:colors.background }}>
       <TouchableOpacity onPress={() => navigation.navigate("Bluetooth")}>

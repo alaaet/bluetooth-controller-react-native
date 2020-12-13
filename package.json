@@ -32,6 +32,7 @@
     "react-native-alarm-notification": "^1.7.1",
     "react-native-appearance": "^0.3.4",
     "react-native-ble-plx": "^2.0.1",
+    "react-native-collapsible": "^1.5.3",
     "react-native-date-picker": "^3.2.5",
     "react-native-eject": "^0.1.2",
     "react-native-elements": "^3.0.0-alpha.1",
