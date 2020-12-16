@@ -17,7 +17,7 @@ const Mode = (props) => {
   return (
     <>
       <View style={styles.wrapper} >
-        <View style={{...styles.btnWrapper,backgroundColor:item.id==selectedModeId?"#6993b5":globalColors.blue}}>
+        <View style={{width:!item.static?130:"100%",backgroundColor:item.id==selectedModeId?globalColors.darkBlue:globalColors.blue}}>
         <Pressable
           style={styles.button}
           onPress={async(e)=>{
@@ -36,7 +36,7 @@ const Mode = (props) => {
             setSelectedModeId(item.id);
             Toast.show({
               text1: 'Mode Alert:',
-              text2: 'Selected Mode is: '+item.name+`👋` 
+              text2:item.name+`  is Activated👋` 
             });
             }
           
@@ -46,6 +46,7 @@ const Mode = (props) => {
           <Text style={styles.btnText}>{item.name}</Text>
         </Pressable>
         </View>
+        {!item.static&&
         <Pressable style={{...styles.wrapper,marginRight:6}} onPress={
           async(e)=>{
             let deviceID = await getDeviceIdFromStorage();
@@ -65,8 +66,9 @@ const Mode = (props) => {
           }	}>
           <FontAwesomeIcon icon={faEdit} style={styles.icon} size={30} />
         </Pressable>
+        }
       </View>
-      <Separator color={colors.separator} ml={1} mr={1} />
+      {!item.static&&<Separator color={colors.separator} ml={1} mr={1} />}
     </>
   );
 };
@@ -77,22 +79,17 @@ const styles = StyleSheet.create({
     padding: 4,
     justifyContent: "space-between",
   },
-  btnWrapper: {
-    width: 130,      
-  },
   icon: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    color: "#3C99DC",    
+    color: globalColors.blue,    
   },
   switch: {
     transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
 
   },
   button: {
-    width: 130,
-   
     paddingVertical:10,
     paddingHorizontal:6,
     borderRadius:5

@@ -13,7 +13,7 @@ import {
 
   function  Help () {
     const {colors, isDark, setScheme} = useTheme();
-    const [activeSections,setActiveSections]=useState([" "]);
+    const [activeSections,setActiveSections]=useState([]);
     const separatorColor = colors.separator;
     const SECTIONS = [
         {
@@ -44,7 +44,7 @@ import {
       const renderHeader = section => {
         return (
           <View style={styles.header}>
-            <Text style={styles.titleText}>{section.title}</Text>
+            <Text style={globalStyles.titleText}>{section.title}</Text>
           </View>
         );
       };
@@ -61,6 +61,7 @@ import {
         );
       };
       const UpdateSections = (val) => {
+        console.log("Active section: ", val)
         setActiveSections(val);
       };
     return (
@@ -101,9 +102,7 @@ import {
           marginVertical:10,
           fontSize: 18, 
       }
-     , titleText: {
-        fontSize: 18,
-      },
+     , 
       textcontainer:{
           marginTop:20,
           display:"flex",

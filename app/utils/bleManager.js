@@ -9,7 +9,8 @@ const sendToPeripheral = async(deviceId, message)=>{
     .then(async(deviceIsConnected)=>{
       if(deviceIsConnected)
       {
-        await manager.discoverAllServicesAndCharacteristicsForDevice(deviceId);
+        const temp = await manager.discoverAllServicesAndCharacteristicsForDevice(deviceId);
+        //console.log("TEMP: ", temp)
         await manager.writeCharacteristicWithoutResponseForDevice(deviceId,"FFE0", 'FFE1',message)
           .then((x)=>{
             console.log("Device is already connected and instruction was executed successfully!");

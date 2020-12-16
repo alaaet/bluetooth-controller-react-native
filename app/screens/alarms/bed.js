@@ -94,6 +94,26 @@ useEffect(()=>{
    init(); 
  },[isFocused]);
 
+  const _addAlarm = async()=>{
+    let deviceID = await getDeviceIdFromStorage();
+    if(deviceID==null)
+    {
+      
+     Toast.show({
+        text1: 'Error😯',
+        text2: 'No controller found, please connect to the controller using Bluetooth!'
+      });
+      setTimeout(() => {
+        navigation.navigate('beds');
+      }, 100);
+     
+    }
+    else 
+    {
+      console.log("Device ID: ", deviceID);
+      navigation.navigate('AddAlarm');
+    }
+  }	
   const _deleteAlarm = async (id) => {
 		if (id !== '') {
       await DeleteAlarm(id)
@@ -109,8 +129,9 @@ useEffect(()=>{
   // VISUAL FUNCTIONS - needed for rendering
   const renderEmpty = () => <Empty hideImage text="No Alarms yet!" />;
   const renderItem = (alarmGroup,index) => {
+    //console.log("alarmGroup",alarmGroup)
     return (
-<Alarm alarm={alarmGroup.item} index={index} deleteAlarm={_deleteAlarm} program={alarmGroup.program} updateProgram={UpdateAlarmProgram} deactivateAlarm={DeactivateAlarm} activateAlarm={ActivateAlarm}/>
+<Alarm key={index} alarm={alarmGroup} index={index} deleteAlarm={_deleteAlarm} program={alarmGroup.program} updateProgram={UpdateAlarmProgram} deactivateAlarm={DeactivateAlarm} activateAlarm={ActivateAlarm}/>
     );
   };
 
@@ -120,25 +141,7 @@ useEffect(()=>{
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <Text style={{...styles.title,color:colors.text}}>{props.name}</Text>
-          <Pressable onPress={        
-          async()=>{
-            let deviceID = await getDeviceIdFromStorage();
-            if(deviceID==null)
-            {
-              
-              Toast.show({
-                text1: 'Error😯',
-                text2: 'No controller found, please connect to the controller using Bluetooth!'
-              });
-              navigation.navigate('Bluetooth');
-            }
-            else 
-            {
-              console.log("Device ID: ", deviceID);
-              navigation.navigate('AddAlarm');
-            }
-          }	
-        }>
+          <Pressable onPress={ _addAlarm }>
             <View style={styles.plusIconContainer}> 
             <FontAwesomeIcon
               icon={faPlus}
@@ -149,24 +152,19 @@ useEffect(()=>{
           </Pressable>
         </View>
         <ScrollView >
-        <FlatList
-        data={alarmGroups}
-        ListEmptyComponent={() => renderEmpty()}
-        renderItem={( alarmGroup ) => renderItem(alarmGroup)}
-        keyExtractor={(alarmGroup) => alarmGroup.id.toString()}
-        contentContainerStyle={styles.listView}
-        style={styles.flatListWrapper}
-      /></ScrollView>
+        {alarmGroups.length>0?(alarmGroups.map((alarmGroup,index)=>renderItem(alarmGroup,index))):renderEmpty()}
+        </ScrollView>
       </View>
     </>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     padding: 5,
     marginBottom: 5,
     flexDirection:"column",
-     height:250
+     //height:250
   },
   wrapper: {
     flexDirection: "row",

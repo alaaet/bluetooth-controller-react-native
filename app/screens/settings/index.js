@@ -1,64 +1,68 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Pressable} from "react-native";
-import Home from "./settingsIndex";
-import General from './general'
-import BluetoothList from "./bluetooth/bluetoothScreen";
-import DeviceView from "./bluetooth/bt-detailed-view";
-import GenerateCommand from './bluetooth/manualCommand';
-import Help from '../settings/help';
-import {useTheme} from '../components/theme/ThemeProvider';
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
- faArrowLeft
-} from "@fortawesome/free-solid-svg-icons";
-const Stack = createStackNavigator();
+import { StyleSheet, View, Text, TouchableOpacity,Switch } from "react-native";
+import { globalStyles, globalColors } from "../../styles/global";
+import Card from "../../components/card";
+import {useTheme} from '../../components/theme/ThemeProvider';
+import { useNavigation } from "@react-navigation/native";
 
-const HomeStack = () => {
-  const {colors, isDark, setScheme} = useTheme();
+
+
+export default function SettingsScreen() {
+  const {colors} = useTheme();
+  const navigation = useNavigation();
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
-      <Stack.Screen
-        name="Bluetooth"
-        component={BluetoothList}
-        options={{ headerTitle: props => <LogoTitle {...props} />, headerStyle: {
-          backgroundColor:colors.header
-           }, headerLeft:  <Pressable  onPress={() => navigation.goBack()}>
-           <FontAwesomeIcon
-             icon={faArrowLeft}
-             size={50}
-           />
-         </Pressable> }}
-         
-      />
-      <Stack.Screen
-        name="General"
-        component={General}
-        options={{ title: "General Settings" }}
-      />
-      <Stack.Screen
-        name="DeviceView"
-        component={DeviceView}
-        options={{ title: "Device View" }}
-      />
-       <Stack.Screen
-        name="GenerateCommand"
-        component={GenerateCommand}
-        options={{ title: "Manual Command" }}
-      />
-       <Stack.Screen
-        name="Help"
-        component={Help}
-        options={{ title: " Help" }}
-      />
-    </Stack.Navigator>
-    
+    <View style={{...styles.containerStyle, backgroundColor:colors.background }}>
+      {/*  
+      <TouchableOpacity onPress={() => navigation.navigate("Bluetooth")}>
+      <Card bgColor={globalColors.blue}>
+      <Text style={globalStyles.titleText}>Bluetooth</Text>
+        </Card>
+      </TouchableOpacity>*/}
+      <TouchableOpacity onPress={() => navigation.navigate("Help")}>
+        <Card bgColor={globalColors.blue}>
+          <Text style={globalStyles.titleText}>Help Center</Text>
+        </Card>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("General")}>
+        <Card bgColor={globalColors.blue}>
+          <Text style={globalStyles.titleText}>General Settings</Text>
+        </Card>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("GenerateCommand")}>
+        <Card bgColor={globalColors.blue}>
+          <Text style={globalStyles.titleText}>Manual Command</Text>
+        </Card>
+      </TouchableOpacity>
+      
+     
+     
+    </View>
   );
-};
+}
 
-export default HomeStack;
+const styles = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 25,},
+    wrapper:{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    messagecontainer:{
+      margin: 24,
+      padding: 12,
+      borderRadius: 4,
+      borderWidth: 2,
+    },
+    messagestyle:{
+      fontSize: 18, 
+    }
+
+    
+
+});
+
+  
+

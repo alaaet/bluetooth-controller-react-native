@@ -6,6 +6,7 @@ import {useTheme} from '../../components/theme/ThemeProvider';
 import Toast from 'react-native-toast-message';
 import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
 import { useNavigation } from "@react-navigation/native";
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
 import {
   faChevronCircleUp,
@@ -20,6 +21,10 @@ export default function CardWithButtons(props) {
   const navigation = useNavigation();
   const Up="up";
  const Down="down";
+ const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false
+};
   const Showtoast =  (data,direction) => {
     //	const {alarmId} = this.state;
         let icon=direction=='up'?'⬆️':'⬇️';
@@ -62,7 +67,8 @@ export default function CardWithButtons(props) {
             else 
             {
               handleUp();
-              Showtoast(message,Up);
+              ReactNativeHapticFeedback.trigger("impactHeavy", options);
+              //Showtoast(message,Up);
             }
           }	}
           onPressOut={(e) =>stopTimer()} 
@@ -81,23 +87,35 @@ export default function CardWithButtons(props) {
               else 
               {
                 handleAction(btns[0]);
-                Showtoast(message,Up);
+                ReactNativeHapticFeedback.trigger("impactHeavy", options);
+                //Showtoast(message,Up);
               }
               }
             }
             >
+              {({ pressed }) => (
             <FontAwesomeIcon
               icon={faChevronCircleUp}
-              style={styles.arrow}
+              style={{color:pressed?globalColors.darkBlue:globalColors.blue}}
               size={50}
-            />
+            />)}
           </Pressable>
         </View>
         <View style={styles.wrapperCenter}>
           <Image style={styles.icon}source={icon} />
         </View>
         <View style={styles.arrowWrapper}>
-          <Pressable onPressIn={() =>{handleDown();Showtoast(message,Down)}} onPressOut={(e) =>stopTimer()} onPress={()=>{handleAction(btns[1]);Showtoast(message,Down)}}>
+          <Pressable onPressIn={() =>
+          {
+            handleDown();
+            ReactNativeHapticFeedback.trigger("impactHeavy", options);
+            //Showtoast(message,Down)
+            }} onPressOut={(e) =>stopTimer()} onPress={()=>
+            {
+              handleAction(btns[1]);
+              ReactNativeHapticFeedback.trigger("impactHeavy", options);
+              //Showtoast(message,Down)
+            }}>
             <FontAwesomeIcon
               icon={faChevronCircleDown}
               style={styles.arrow}

@@ -41,7 +41,7 @@ export function CustomPicker({ selectedOption,  setSelectedOption, options}) {
 
 
 const androidStyles = StyleSheet.create({
-  picker: { height: 20, width: 140, color: globalColors.blue},    
+  picker: { height: 20, width:140, color: globalColors.blue},    
 });
   
 const iOSStyles = StyleSheet.create({

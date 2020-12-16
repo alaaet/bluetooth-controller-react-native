@@ -6,80 +6,38 @@ import Mode from "./mode";
 import {useTheme} from '../../components/theme/ThemeProvider';
 import { useIsFocused } from "@react-navigation/native";
 import { globalColors } from "../../styles/global";
-import AsyncStorage from '@react-native-community/async-storage';
 import {sendToPeripheral,createCommandFromString} from "../../utils/bleManager"
 import {decode as atob, encode as btoa} from 'base-64';
 import {
-  MOVE_SINGLE_UP, MOVE_SINGLE_DOWN, MOVE_DUAL_HEAD_UP, MOVE_DUAL_HEAD_DOWN, MOVE_DUAL_LEGS_UP, MOVE_DUAL_LEGS_DOWN, MOVE_DUAL_BOTH_UP, MOVE_DUAL_BOTH_DOWN, MOTOR_ONE_ON, MOTOR_ONE_OFF, MOTOR_TWO_ON, MOTOR_TWO_OFF, MOTOR_THREE_ON, MOTOR_THREE_OFF, MOTOR_FOUR_ON, MOTOR_FOUR_OFF, MOTOR_ONE_AND_TWO_ON, MOTOR_ONE_AND_TWO_OFF, MOTOR_THREE_AND_FOUR_ON, MOTOR_THREE_AND_FOUR_OFF, MOTOR_ONE_TWO_THREE_FOUR_OFF
+  MOVE_DUAL_HEAD_UP, MOVE_DUAL_HEAD_DOWN, MOVE_DUAL_LEGS_UP, MOVE_DUAL_LEGS_DOWN, MOVE_DUAL_BOTH_UP, MOVE_DUAL_BOTH_DOWN,MOTOR_LATENCY
 } from "../../shared/constants";
+import {getDeviceIdFromStorage,readModesFromStorage,saveModesToStorage} from "../../utils/phoneStorage"
 
-
-const initialModes=[
-  {id:"1",name:"Reading Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Up",motor2direction:"Up"},
-  {id:"2",name:"Sleep Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Down",motor2direction:"Down"},
-  {id:"3",name:"Relax Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Up",motor2direction:"Up"}
-];
 
 export default function Control() {
   const {colors} = useTheme();
-  const Modes_STORAGE_KEY="modes";
   const [currentModes,setCurrentModes] = useState([]);
   const [selectedModeId,setSelectedModeId] = useState(0);
   const [deviceId, setDeviceId] = useState("");
   const isFocused = useIsFocused();
-  const DEVICE_STORAGE_KEY = "Device";
-  
-  const readModeFromStorage = async () => {
-    try {
-      const modesFromStorage =JSON.parse( await AsyncStorage.getItem(Modes_STORAGE_KEY))  
-      if (modesFromStorage !== null) {
-        setCurrentModes(modesFromStorage);
-       console.log("Mode were read from storage memory!", modesFromStorage);
-      }
-      else{
-        setCurrentModes(initialModes);
-        console.log("!!INITIAL DATA!!")
-      }
-    } catch (e) {
-     console.log(e.message)
-    }
-  }
-  
-  const saveModeToStorage = async () => {
-    try {
-      if(currentModes.length>0)       
-      await AsyncStorage.setItem(Modes_STORAGE_KEY,JSON.stringify(currentModes));
-      console.log("Modes were saved to storage memory!");
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
-
-  const readDeviceIdFromStorage = async () => {
-    try {
-      const deviceIdFromStorage =JSON.parse( await AsyncStorage.getItem(DEVICE_STORAGE_KEY))  
-      if (deviceIdFromStorage !== null) {
-        setDeviceId(deviceIdFromStorage);
-       console.log("Device Id was read from storage memory!", deviceIdFromStorage);
-      }
-    } catch (e) {
-     console.log(e.message)
-    }
-  }
-
+ 
   useEffect(()=>{
-    readModeFromStorage();
-  },[isFocused])
-
-  
-  useEffect(()=>{
-    readModeFromStorage();
-    readDeviceIdFromStorage();
+    const init = async()=>{
+      setCurrentModes( await readModesFromStorage());    
+    setDeviceId(await getDeviceIdFromStorage())
+  }
+    init();
   },[])
-  
 
+  useEffect(()=>{
+    const init= async()=>{
+    setCurrentModes( await readModesFromStorage());
+  }
+  init();
+  },[isFocused])
+  
 useEffect(()=>{  
-  saveModeToStorage();  
+  saveModesToStorage(currentModes);  
 },[currentModes]);
 
 useEffect(()=>{
@@ -88,11 +46,12 @@ useEffect(()=>{
   let timer1 = null;
   let timer2 = null;
   const move = (motorNum,maxCount, instruction)=>{
+    //console.log("MAX COUNT: ",maxCount)
     if(motorNum==1){
       if(motor1count/3<maxCount){
         motor1count++;
         sendToPeripheral(deviceId,instruction);
-        timer1 = setTimeout(() => {move(motorNum,maxCount, instruction)}, 100);
+        timer1 = setTimeout(() => {move(motorNum,maxCount, instruction)}, MOTOR_LATENCY);
       }
       else{
         clearTimeout(timer1);
@@ -102,7 +61,7 @@ useEffect(()=>{
       if(motor2count/3<maxCount){
         motor2count++;
         sendToPeripheral(deviceId,instruction);
-        timer2 = setTimeout(() => {move(motorNum,maxCount, instruction)}, 100);
+        timer2 = setTimeout(() => {move(motorNum,maxCount, instruction)}, MOTOR_LATENCY);
       }      
       else{
         clearTimeout(timer2);
@@ -110,36 +69,39 @@ useEffect(()=>{
     }
 
   }
-  if(deviceId!=""){
-    console.log("selected mode changed, device id: ",deviceId);
-    console.log("selected mode changed, mode: ",currentModes[selectedModeId-1]);
-    const mode = currentModes[selectedModeId-1];
-    if(mode.motor1direction=="Up")
-    {
-      move(1,mode.motor1scale,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x04 0x40')));
-    }else if(mode.motor1direction=="Down"){
-      move(1,mode.motor1scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x04 0x40')));    
-    }
+  if(deviceId!=""){    
+    move(1,15,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40')));   
+    // WAIT for the controller to reset then execute the order
+    setTimeout(() => {
+       motor1count = 0;
+       motor2count = 0;
+      console.log("selected mode changed, device id: ",deviceId);
+      console.log("selected mode changed, mode: ",currentModes[selectedModeId-1]);
+      const mode = currentModes[selectedModeId-1];
+      if(mode.motor1direction=="Up")
+      {
+        move(1,mode.motor1scale,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x04 0x40')));
+      }else if(mode.motor1direction=="Down"){
+        move(1,mode.motor1scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x04 0x40')));    
+      }
 
-    if(mode.motor2direction=="Up")
-    {
-      move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40')));
-      
-    }else if(mode.motor1direction=="Down"){
-      move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));
-    }
+      if(mode.motor2direction=="Up")
+      {
+        move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40')));
+        
+      }else if(mode.motor1direction=="Down"){
+        move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));
+      }
+    }, MOTOR_LATENCY * 4 * 15);
+    
   }
+  
 },[selectedModeId]);
+
 
 const moveMotor  = async (movement)=>{
   let base64String = "";
   switch (movement) {
-    case MOVE_SINGLE_UP:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40'));
-        break;
-    case MOVE_SINGLE_DOWN:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40'));
-        break;
     case MOVE_DUAL_HEAD_UP:
         base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40'));
         break;
@@ -157,57 +119,17 @@ const moveMotor  = async (movement)=>{
         break;
     case MOVE_DUAL_BOTH_DOWN:
         base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40'));
-        break;
-    case MOTOR_ONE_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40'));
-        break;
-    case MOTOR_ONE_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40'));
-        break;
-    case MOTOR_TWO_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x04 0x40'));
-        break;
-    case MOTOR_TWO_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x04 0x40'));
-        break;
-    case MOTOR_THREE_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x08 0x40'));
-        break;
-    case MOTOR_THREE_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x08 0x40'));
-        break;
-    case MOTOR_FOUR_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x10 0x40'));
-        break;
-    case MOTOR_FOUR_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x10 0x40'));
-        break;
-    case MOTOR_ONE_AND_TWO_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x06 0x40'));
-        break;
-    case MOTOR_ONE_AND_TWO_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40'));
-        break;
-    case MOTOR_THREE_AND_FOUR_ON:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x18 0x40'));
-        break;
-    case MOTOR_THREE_AND_FOUR_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x18 0x40'));
-        break;
-    case MOTOR_ONE_TWO_THREE_FOUR_OFF:
-        base64String = hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x1E 0x40'));
-        break;
+        break;    
     }
-    const DeviceId =JSON.parse( await AsyncStorage.getItem(DEVICE_STORAGE_KEY))	
-    sendToPeripheral(DeviceId,base64String);
+    sendToPeripheral(deviceId,base64String);
 
 }
 
-   const hexToBase64 = (str) =>{
-     return btoa(String.fromCharCode.apply(null,
-      str.replace(/0x/g,"").replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
-    );
-  }
+const hexToBase64 = (str) =>
+{
+  return btoa(String.fromCharCode.apply(null,
+  str.replace(/0x/g,"").replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
+}
 
   return (
     <ScrollView   style={{...globalStyles.container, backgroundColor:colors.background}}>      
@@ -216,7 +138,7 @@ const moveMotor  = async (movement)=>{
       <CardWithButtons icon={require("../../icons/Rectangle1-1.png") } message={" Leg & Back"} handleAction={moveMotor} btns={[MOVE_DUAL_BOTH_UP,MOVE_DUAL_BOTH_DOWN]}/>
       
       <Text style={{...styles.title,color:colors.text}}>Modes</Text>
-      <View style={{...globalStyles.container, backgroundColor:colors.card}}>
+      <View style={{...globalStyles.container, paddingBottom:3,backgroundColor:colors.card}}>
         {currentModes.map((item,index)=>(<Mode item={item} key={index} selectedModeId={selectedModeId} setSelectedModeId={setSelectedModeId}/>))}
       </View>
     </ScrollView >

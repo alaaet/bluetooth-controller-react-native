@@ -52,7 +52,10 @@ function  General () {
 
           <View style={{flex:4}}>
             <Pressable style={styles.button}  onPress={()=>SetTime()} ><Text style={styles.btnText}>
-              Reset Controller Time</Text></Pressable>
+            Update Controller time</Text></Pressable>
+            <Text style={{fontSize:16,color:globalColors.lightGrey}}>
+            When change between Summer/Winter Time, or if you notice any difference between the mobile clock and the controller screen, please press this button
+            </Text>
               </View>
         </View>  
     

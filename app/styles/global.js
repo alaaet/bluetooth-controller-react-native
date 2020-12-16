@@ -3,12 +3,14 @@ export const globalColors =
 {
   yellow :"#f9ce40",
   blue: "#76bae7",
+  darkBlue:"#5b83a3",
   black:"#000000",
   white: "#ffffff",
   grey:"#f4f3f4",
   grey2:"#D3D3D3",
   Darkgrey:"#767577",
-
+  lightGrey:'#c2c0c2'
+,
 };
 export const lightColors = {
   background: '#FFFFFF',

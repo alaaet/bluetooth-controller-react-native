@@ -37,6 +37,7 @@
     "react-native-eject": "^0.1.2",
     "react-native-elements": "^3.0.0-alpha.1",
     "react-native-gesture-handler": "^1.7.0",
+    "react-native-haptic-feedback": "^1.11.0",
     "react-native-paper": "^4.3.1",
     "react-native-picker-select": "^8.0.2",
     "react-native-reanimated": "^1.13.1",
@@ -49,6 +50,7 @@
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "^0.13.14",
     "react-native-windows": "^0.63.0-0",
+    "rxjs": "^6.6.3",
     "styled-components": "^5.2.0"
   },
   "devDependencies": {

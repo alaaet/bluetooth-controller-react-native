@@ -4,7 +4,7 @@ import Control from "../screens/control";
 import Alarms from "../screens/alarms";
 import Beds from "../screens/beds";
 import Co2 from "../screens/co2";
-import Settings from "../screens/settings";
+import SettingsScreen from "../screens/settings";
 import Temperature from '../screens/temperature';
 import {globalColors} from '../styles/global';
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -100,7 +100,7 @@ const BottomStack = () => {
       />
       <Tab.Screen
         name="settings"
-        component={Settings}
+        component={SettingsScreen}
         options={{
           tabBarLabel: "Settings",
           tabBarIcon: ({ color }) => (

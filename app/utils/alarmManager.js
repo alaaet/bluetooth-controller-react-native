@@ -10,8 +10,9 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
     let scenario;
     let alarmGroups = await readAlarmGroupsFromStorage();
     const count = alarmGroups.length;
-    let newAlarmGroup = {id:alarmGroups.length,type:alarmData.frequency,program:alarmData.program,isActive:true,hour:alarmData.hour,minute:alarmData.minute,alarms:[]};
-    let dayIndex = alarmData.date.getDay()-1;			
+    let newAlarmGroup = {id:alarmGroups.length,enable:alarmData.play_sound,type:alarmData.frequency,program:alarmData.program,isActive:true,hour:alarmData.hour,minute:alarmData.minute,Bed:alarmData.bed,alarms:[]};
+    let dayIndex = alarmData.date.getDay()-1;	
+    if(dayIndex<0) dayIndex = 7+dayIndex;		
     let day = decimalToHex(WEEKDAYS[dayIndex].dow);
     let idObj = 0;
     const clone = (obj)=> {
@@ -42,7 +43,7 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
             break;
 
 
-    }
+    };
 
     switch (alarmData.frequency) {
         case FREQUENCIES[0].value: // ONCE
@@ -50,15 +51,17 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
             idObj=  await scheduleAlarm(alarmData);
             //console.log("id",idObj.id)
             alarmData.id =  idObj.id;
+            newAlarmGroup.id=alarmData.id;
             newAlarmGroup.alarms.push(alarmData);
-            //console.log("alarmGroups",newAlarmGroup)
+           //console.log("alarmGroups",newAlarmGroup)
             break;
         case FREQUENCIES[1].value: // DAILY
             alarmData.schedule_type="repeat";
             alarmData.repeat_interval="daily";
-            idObj=  await scheduleAlarm(alarmData);
+           idObj=  await scheduleAlarm(alarmData);
             //console.log("id",idObj.id)
             alarmData.id =  idObj.id;
+            newAlarmGroup.id=alarmData.id;
             newAlarmGroup.alarms.push(alarmData);
             day = "7f"
             break;
@@ -68,24 +71,28 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
             idObj=  await scheduleAlarm(alarmData);
             //console.log("id",idObj.id)
             alarmData.id =  idObj.id;
+            newAlarmGroup.id=alarmData.id;
             newAlarmGroup.alarms.push(alarmData);
             break;
         case FREQUENCIES[3].value: //CUSTOM
             alarmData.schedule_type="repeat";
-            alarmData.repeat_interval="daily";
+            alarmData.repeat_interval="weekly";
+            console.log("weekDays",weekDays)
             let selectedDays = weekDays.filter(day=>day.isSelected);
             let total = 0;
             selectedDays.forEach(day=>total+=day.dow);
-            //console.log("selectedDays",selectedDays)
             day = decimalToHex(total);
-            let today = WEEKDAYS[(new Date(Date.now())).getDay()-1];
+            let dayIndex = (new Date(Date.now())).getDay()-1;
+            if(dayIndex<0) dayIndex = 7+dayIndex;
+            console.log("Day index: ",dayIndex)
+            let today = WEEKDAYS[dayIndex];
             selectedDays.forEach(async day=>{
                 alarmData.date=alarmDate;
                 alarmData.fire_date=alarmDate;
                 let alarm = clone(alarmData);
                 
                 //console.log("alarm",alarm)
-                //console.log("day of week:",day.dow)
+                console.log("day of week:",day.dow)
                 //console.log("Today is equal to date:",today.dow == day.dow)
                 if(today.dow>day.dow)
                 {
@@ -112,7 +119,10 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
                 }
                 else{
                     let	newdate=new Date(alarm.date);
-                    newdate.setDate(alarm.date.getDate());
+                    if(new Date(Date.now())>new Date(alarm.date))
+                        {
+                            newdate.setDate(alarm.date.getDate()+7);
+                        }                    
                     //console.log("newdate",newdate)
                     alarm.date = newdate;
                     alarm.fire_date=parseDate(newdate);
@@ -120,7 +130,10 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
                 idObj=  await scheduleAlarm(alarm);              
                 alarm.id =  idObj.id;
                 //console.log("NEW ALARM INSTANCE:" , alarm)
+                newAlarmGroup.id=alarm.id;
                 newAlarmGroup.alarms.push(alarm);
+               
+               
             });
             break;
         default:
@@ -136,15 +149,17 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
 }
 
 export const DeleteAlarm = async (alarmGroupId)=>{
-    //console.log("Deleting alarm group with id: " ,alarmGroupId);
+    console.log("Deleting alarm group with id: " ,alarmGroupId);
     let alarmGroups = await readAlarmGroupsFromStorage();
     let alarmGroupToBeDeleted = alarmGroups.find(alarmGroup=>alarmGroup.id==alarmGroupId);
+    console.log("alarmGroupToBeDeleted:",alarmGroupToBeDeleted)
     if(alarmGroupToBeDeleted !=null)
     {
         alarmGroupToBeDeleted.alarms.forEach(async alarm=>{
             const alarmId = parseInt(alarm.id, 10);
             console.log("Deleting alarm :",alarm.id)
-            await ReactNativeAN.deleteAlarm(alarmId);
+           let Id= await ReactNativeAN.deleteAlarm(alarmId);
+           console.log("Deleting alarm Id :",Id)
         });
     }
     else 
@@ -152,7 +167,8 @@ export const DeleteAlarm = async (alarmGroupId)=>{
         throw new Error('The alarm you are trying to delete does not exist');
     }
     //console.log("type of alarmGroupId", typeof alarmGroupId);
-    const newArr = alarmGroups.filter(alarmGroup=>alarmGroup.id!=alarmGroupId);
+      const newArr =  alarmGroups.filter(alarmGroup=>alarmGroup.id!=alarmGroupId);
+    console.log("new alarmgroups array",newArr)
     //console.log("alarmGroups after delete:", newArr);
     await saveAlarmGroupsToStorage(newArr);
     await GetAlarmsFromPhone();
@@ -224,7 +240,7 @@ export const GetAlarmsFromPhone= async()=>{
         })
       });
       await saveAlarmGroupsToStorage(alarmGroups);
-      //console.log("Alarms were read from phone system!", list);
+      console.log("Alarms were read from phone system!", list);
     }
   }
 
