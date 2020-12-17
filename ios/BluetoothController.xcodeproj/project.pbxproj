@@ -10,6 +10,7 @@
 		00E356F31AD99517003FC87E /* BluetoothControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BluetoothControllerTests.m */; };
 		04E4E0A2255B0EA200310555 /* empty.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04E4E0A1255B0EA200310555 /* empty.mp3 */; };
 		04E4E0A8255B0EBF00310555 /* argon.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04E4E0A7255B0EBF00310555 /* argon.mp3 */; };
+		04F1D6E2258C12FE0021D17D /* Launch Screen1.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04F1D6E1258C12FE0021D17D /* Launch Screen1.storyboard */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -46,6 +47,7 @@
 		0493A4249C17363D984E33F6 /* Pods-BluetoothController-BluetoothControllerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluetoothController-BluetoothControllerTests.release.xcconfig"; path = "Target Support Files/Pods-BluetoothController-BluetoothControllerTests/Pods-BluetoothController-BluetoothControllerTests.release.xcconfig"; sourceTree = "<group>"; };
 		04E4E0A1255B0EA200310555 /* empty.mp3 */ = {isa = PBXFileReference; explicitFileType = audio.mp3; path = empty.mp3; sourceTree = "<group>"; };
 		04E4E0A7255B0EBF00310555 /* argon.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = argon.mp3; sourceTree = "<group>"; };
+		04F1D6E1258C12FE0021D17D /* Launch Screen1.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen1.storyboard"; sourceTree = "<group>"; };
 		0D81F89998AE44A0AD09AB51 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* BluetoothController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BluetoothController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = BluetoothController/AppDelegate.h; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				04F1D6E1258C12FE0021D17D /* Launch Screen1.storyboard */,
 			);
 			name = BluetoothController;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				04E4E0A8255B0EBF00310555 /* argon.mp3 in Resources */,
 				04E4E0A2255B0EA200310555 /* empty.mp3 in Resources */,
+				04F1D6E2258C12FE0021D17D /* Launch Screen1.storyboard in Resources */,
 				C86D83E9257D976700102F7B /* Smoothly Awake-logo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

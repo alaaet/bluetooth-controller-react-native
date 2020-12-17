@@ -127,11 +127,15 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
                     alarm.date = newdate;
                     alarm.fire_date=parseDate(newdate);
                 }
-                idObj=  await scheduleAlarm(alarm);              
+                setTimeout(() => {
+                    idObj=   scheduleAlarm(alarm);              
                 alarm.id =  idObj.id;
                 //console.log("NEW ALARM INSTANCE:" , alarm)
                 newAlarmGroup.id=alarm.id;
                 newAlarmGroup.alarms.push(alarm);
+                    
+                }, 200);
+                
                
                
             });
