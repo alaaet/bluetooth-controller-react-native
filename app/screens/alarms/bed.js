@@ -156,7 +156,7 @@ useEffect(()=>{
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <Text style={{...styles.title,color:colors.text}}>{props.name}</Text>
-          <Pressable onPress={ _addAlarm }>
+          <Pressable onPress={_addAlarm }>
             <View style={styles.plusIconContainer}> 
             <FontAwesomeIcon
               icon={faPlus}

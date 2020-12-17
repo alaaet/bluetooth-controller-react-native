@@ -212,7 +212,7 @@ const AddAlarm = (props) => {
 				</View>
 			</View>	
 				
-			<Pressable style={styles.button}  onPress={()=> ProcessAlarm(alarmData) }><Text style={styles.btnText}>
+			<Pressable style={styles.button}  onPress={async()=>await ProcessAlarm(alarmData) }><Text style={styles.btnText}>
 				Add</Text></Pressable>
         </View>		
     )

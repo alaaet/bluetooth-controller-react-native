@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   buttonsWrapper: {
     flexDirection: "row",
     justifyContent:Platform.OS === 'ios' ? "space-between" : 'center',
-    marginVertical:3,
+    marginVertical:Platform.OS === 'ios' ? 6 : 3,
     //width:"100%"
    
   },
