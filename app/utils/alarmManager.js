@@ -225,9 +225,11 @@ export const ActivateAlarm = async(_alarmGroup)=>{
 
 export const GetAlarmsFromPhone= async()=>{
     let alarmGroups = await readAlarmGroupsFromStorage();
+    console.log("GetAlarmsFromPhone: alarmGroups from storage: ",alarmGroups)
     const list = await getScheduledAlarms();
+    console.log("GetAlarmsFromPhone: alarms from system: ",list)
     // loop though the list and activate matching alarm groups
-    if(list!=null) 
+    if(list?.length>0&&alarmGroups?.length>0) 
     {
       list.forEach(element => {
         alarmGroups.forEach(alarmGroup=>{
@@ -239,9 +241,9 @@ export const GetAlarmsFromPhone= async()=>{
             })
         })
       });
-      await saveAlarmGroupsToStorage(alarmGroups);
-      console.log("Alarms were read from phone system!", list);
+      return alarmGroups;
     }
+    return [];
   }
 
 export const UpdateAlarmProgram = async(alarmGroupId, program)=>{

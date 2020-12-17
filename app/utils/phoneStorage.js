@@ -29,7 +29,7 @@ import Toast from 'react-native-toast-message';
     if(alarmGroups){
       try {
         await AsyncStorage.setItem(ALARM_GROUPS_KEY,JSON.stringify(alarmGroups));
-        //console.log("Alarm Groups were saved to storage memory:",JSON.stringify(alarmGroups));
+        console.log("Alarm Groups were saved to storage memory:",alarmGroups);
       } catch (e) {
         console.log(e.message)
       }
@@ -39,7 +39,7 @@ import Toast from 'react-native-toast-message';
     try {
       const alarmGroups =JSON.parse( await AsyncStorage.getItem(ALARM_GROUPS_KEY))  
       if (alarmGroups !== null) {
-       //console.log(" Alarm Groups were read from storage memory!");
+       console.log(" Alarm Groups were read from storage memory!",alarmGroups);
        return alarmGroups;
       }
       else

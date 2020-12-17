@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from "react";
+import React, {useState,useEffect,useRef} from "react";
 import { View, Pressable, Text,FlatList,ScrollView, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +14,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 import {useTheme} from '../../components/theme/ThemeProvider';
 
 const Bed = (props) => {
+  const isFirstRun = useRef(true);
   const {colors} = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -54,7 +55,11 @@ useEffect(()=>{
   // First time 
   useEffect(()=>{   
     const init = async()=>{
-      setAlarmGroups(await readAlarmGroupsFromStorage());      
+      setAlarmGroups(await readAlarmGroupsFromStorage()); 
+      if (isFirstRun.current) 
+      {
+        isFirstRun.current = false;
+      }     
     }
     init();
     const dismissSubscription = RNAlarmEmitter.addListener(
@@ -74,7 +79,12 @@ useEffect(()=>{
 
   // When Alarm Groups change
   useEffect( ()=>{
-    saveAlarmGroupsToStorage(alarmGroups);
+    console.log("First run value: ",isFirstRun.current);
+    console.log("Bed component: Alarm groups: ", alarmGroups)
+    if(!isFirstRun.current)
+    {
+      saveAlarmGroupsToStorage(alarmGroups);
+    }
   },[alarmGroups]);
 
   // When Alarm is deleted or updated
@@ -86,12 +96,17 @@ useEffect(()=>{
   },[deleteCount,updateCount]);
 
   // When screen is in focus
-  useEffect(()=>{     
-    const init = async()=>{
-      await GetAlarmsFromPhone();
-     setAlarmGroups(await readAlarmGroupsFromStorage());   
-   }
-   init(); 
+  useEffect(()=>{   
+    if(isFocused)
+    {  
+      console.log("Bed component is in focus")
+      const init = async()=>{
+        const alarmsFromSystem = await GetAlarmsFromPhone();
+        console.log("alarms From System: ", alarmsFromSystem)
+      setAlarmGroups(alarmsFromSystem);  
+      }
+      init(); 
+    }
  },[isFocused]);
 
   const _addAlarm = async()=>{
