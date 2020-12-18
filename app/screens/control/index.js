@@ -138,7 +138,7 @@ const hexToBase64 = (str) =>
       <CardWithButtons icon={require("../../icons/Rectangle1-1.png") } message={" Leg & Back"} handleAction={moveMotor} btns={[MOVE_DUAL_BOTH_UP,MOVE_DUAL_BOTH_DOWN]}/>
       
       <Text style={{...styles.title,color:colors.text}}>Modes</Text>
-      <View style={{...globalStyles.container, paddingBottom:3,backgroundColor:colors.card}}>
+      <View style={{...globalStyles.container, paddingBottom:3,marginBottom:25,backgroundColor:colors.card}}>
         {currentModes.map((item,index)=>(<Mode item={item} key={index} selectedModeId={selectedModeId} setSelectedModeId={setSelectedModeId}/>))}
       </View>
     </ScrollView >
