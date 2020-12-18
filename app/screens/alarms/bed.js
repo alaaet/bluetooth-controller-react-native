@@ -102,7 +102,7 @@ useEffect(()=>{
       console.log("Bed component is in focus")
       const init = async()=>{
         const alarmsFromSystem = await GetAlarmsFromPhone();
-        console.log("alarms From System: ", alarmsFromSystem)
+        console.log("alarms From System: ", alarmsFromSystem.alarms)
       setAlarmGroups(alarmsFromSystem);  
       }
       init(); 

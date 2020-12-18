@@ -86,7 +86,7 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
             if(dayIndex<0) dayIndex = 7+dayIndex;
             console.log("Day index: ",dayIndex)
             let today = WEEKDAYS[dayIndex];
-            selectedDays.forEach(async day=>{
+            selectedDays.forEach(async (day,i)=>{
                 alarmData.date=alarmDate;
                 alarmData.fire_date=alarmDate;
                 let alarm = clone(alarmData);
@@ -127,17 +127,15 @@ export const SetAlarm = async(deviceId,alarmData,weekDays)=>{
                     alarm.date = newdate;
                     alarm.fire_date=parseDate(newdate);
                 }
-                setTimeout(() => {
-                    idObj=   scheduleAlarm(alarm);              
-                alarm.id =  idObj.id;
-                //console.log("NEW ALARM INSTANCE:" , alarm)
-                newAlarmGroup.id=alarm.id;
-                newAlarmGroup.alarms.push(alarm);
-                    
-                }, 200);
-                
-               
-               
+                let delay = i==0?0:800
+                setTimeout(async() => {
+                    console.log("NEW ALARM INSTANCE:" , alarm)
+                    idObj=   await scheduleAlarm(alarm)
+                    alarm.id =  idObj.id;
+                    newAlarmGroup.id=alarm.id;
+                    newAlarmGroup.alarms.push(alarm); 
+                }, delay);
+                 
             });
             break;
         default:
