@@ -48,7 +48,8 @@ useEffect(()=>{
   const move = (motorNum,maxCount, instruction)=>{
     //console.log("MAX COUNT: ",maxCount)
     if(motorNum==1){
-      if(motor1count/3<maxCount){
+      //back
+      if(motor1count<maxCount){
         motor1count++;
         sendToPeripheral(deviceId,instruction);
         timer1 = setTimeout(() => {move(motorNum,maxCount, instruction)}, MOTOR_LATENCY);
@@ -58,7 +59,8 @@ useEffect(()=>{
       }
     }
     else if(motorNum==2){
-      if(motor2count/3<maxCount){
+      //leg
+      if(motor2count<maxCount){
         motor2count++;
         sendToPeripheral(deviceId,instruction);
         timer2 = setTimeout(() => {move(motorNum,maxCount, instruction)}, MOTOR_LATENCY);
@@ -69,9 +71,16 @@ useEffect(()=>{
     }
 
   }
-  if(deviceId!=""){    
-    move(1,15,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40')));   
-    // WAIT for the controller to reset then execute the order
+  if(deviceId!=""&&selectedModeId!==0){    
+   move(1,12,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40')));  
+   setTimeout(() => {
+    motor1count = 0;
+    motor2count = 0;
+    move(1,14,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));  
+   }, MOTOR_LATENCY * 15);
+   
+
+   // WAIT for the controller to reset then execute the order
     setTimeout(() => {
        motor1count = 0;
        motor2count = 0;
@@ -92,7 +101,14 @@ useEffect(()=>{
       }else if(mode.motor1direction=="Down"){
         move(2,mode.motor2scale,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));
       }
-    }, MOTOR_LATENCY * 4 * 15);
+     
+    }, MOTOR_LATENCY *35);
+
+    if(selectedModeId==4){
+      setTimeout(() => {
+        setSelectedModeId(0);
+      }, MOTOR_LATENCY*35);
+    }
     
   }
   

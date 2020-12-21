@@ -48,6 +48,7 @@ export default function Beds(props) {
   const isFocused = useIsFocused();
   const [bed, setBed] = useState({id:null,name:null,device:null});
   const navigation = useNavigation();
+  const [showEmpty, setShowEmpty] = useState(false);
     
   useEffect(()=>{
     const init = async()=>{await requestLocationPermission();}
@@ -221,11 +222,14 @@ export default function Beds(props) {
   const startScan=()=>{
   //  manager.enable();
     setTimeout(() => {   scanAndConnect(); }, 1000);
+    setShowEmpty(true);
    } 
   //////////////////////////
   const disconnect=async()=>{
-    let res= await manager.cancelDeviceConnection(deviceId);
-    setBed({id:null,name:null,device:null});
+    let res= await manager.cancelDeviceConnection(deviceId).then((res)=>{
+      console.log("disconnect respons",res)
+    }).catch((e)=>{console.log("disconnect error",e)});
+    await setBed({id:null,name:null,device:null});
    }
    const bedEdit=()=>{
     navigation.navigate('Edit', {item:bed})
@@ -270,8 +274,8 @@ export default function Beds(props) {
       
         </View>
        
-        <Subtitle title=" Available Devices" />
-        {devicesList.length>0?(devicesList.map((device,index)=>renderItem(device,index))):renderEmpty()}
+        {devicesList.length>0&&<Subtitle title=" Available Devices" />}
+        {devicesList.length>0?(devicesList.map((device,index)=>renderItem(device,index))):showEmpty&&renderEmpty()}
         {/* <FlatList 
           data={devicesList}
           ListEmptyComponent={() => renderEmpty()}

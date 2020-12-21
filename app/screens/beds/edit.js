@@ -48,8 +48,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         marginBottom:10,
-        position:'absolute',
-		bottom:0,
+   
 
         },
     btnText: {
