@@ -29,7 +29,7 @@ const Mode = (props) => {
                 text1: 'Error😯',
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
               });
-              navigation.navigate('Bluetooth');
+              navigation.navigate('beds');
             }
             else 
             {
@@ -57,7 +57,7 @@ const Mode = (props) => {
                 text1: 'Error😯',
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
               });
-              navigation.navigate('Bluetooth');
+              navigation.navigate('beds');
             }
             else 
             {

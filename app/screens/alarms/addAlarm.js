@@ -28,6 +28,7 @@ let alarmData = {
 	sound_name: "argon.mp3",
 	small_icon:"ic_launcher",
 	color:globalColors.blue,
+	interval_value:[1]
 
 };
 

@@ -62,7 +62,7 @@ export default function CardWithButtons(props) {
                 text1: 'Error😯',
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
               });
-              navigation.navigate('Bluetooth');
+              navigation.navigate('beds');
             }
             else 
             {
@@ -82,7 +82,7 @@ export default function CardWithButtons(props) {
                   text1: 'Error😯',
                   text2: 'No controller found, please connect to the controller using Bluetooth!'
                 });
-                navigation.navigate('Bluetooth');
+                navigation.navigate('beds');
               }
               else 
               {
@@ -110,10 +110,24 @@ export default function CardWithButtons(props) {
             handleDown();
             ReactNativeHapticFeedback.trigger("impactHeavy", options);
             //Showtoast(message,Down)
-            }} onPressOut={(e) =>stopTimer()} onPress={()=>
-            {
+            }} onPressOut={(e) =>stopTimer()} 
+            onPress={ 
+              async()=>{
+              let deviceID = await getDeviceIdFromStorage();
+              if(deviceID==null)
+              {
+                
+                Toast.show({
+                  text1: 'Error😯',
+                  text2: 'No controller found, please connect to the controller using Bluetooth!'
+                });
+                navigation.navigate('beds');
+              }
+              else 
+              {
               handleAction(btns[1]);
               ReactNativeHapticFeedback.trigger("impactHeavy", options);
+              }
               //Showtoast(message,Down)
             }}>
             <FontAwesomeIcon
