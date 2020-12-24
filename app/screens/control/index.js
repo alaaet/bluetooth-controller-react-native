@@ -127,7 +127,7 @@ useEffect(()=>{
       const mode = currentModes[selectedModeId-1];
       if(mode.motor1scale!==0)
       {
-        move(1,mode.motor1scale+6,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40')));
+        move(1,mode.motor1scale,hexToBase64(createCommandFromString('0x40 0x02 0x70 0x00 0x01 0x02 0x40')));
       }
 
       if(mode.motor2scale!==0)

@@ -79,7 +79,7 @@ const EditMode = (props) => {
                         <Slider
                             value={mode.motor1scale}
                             onValueChange={(value) => setMode({...mode,motor1scale:value })}
-                            maximumValue={20}
+                            maximumValue={26}
                             minimumValue={0}
                             step={1}
                            minimumTrackTintColor={globalColors.blue}
@@ -116,7 +116,7 @@ const EditMode = (props) => {
                         <Slider
                             value={mode.motor2scale}
                             onValueChange={(value) => setMode({...mode,motor2scale:value })}
-                            maximumValue={12}
+                            maximumValue={14}
                             minimumValue={0}
                             step={1}
                             minimumTrackTintColor={globalColors.blue}
