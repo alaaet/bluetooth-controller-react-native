@@ -110,12 +110,12 @@ useEffect(()=>{
 
   }
   if(deviceId!=""&&selectedModeId!==0){    
-   move(1,15,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40')));  
+   move(1,16,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x06 0x40')));  
    setTimeout(() => {
     motor1count = 0;
     motor2count = 0;
-    move(1,18,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));  
-   }, MOTOR_LATENCY * 22);
+    move(1,20,hexToBase64(createCommandFromString('0x40 0x02 0x71 0x00 0x01 0x02 0x40')));  
+   }, MOTOR_LATENCY * 23);
    
 
    // WAIT for the controller to reset then execute the order
@@ -136,12 +136,12 @@ useEffect(()=>{
         
       }
      
-    }, MOTOR_LATENCY *50);
+    }, MOTOR_LATENCY *53);
 
     if(selectedModeId==4){
       setTimeout(() => {
         setSelectedModeId(0);
-      }, MOTOR_LATENCY*50);
+      }, MOTOR_LATENCY*53);
     }
     
   }
