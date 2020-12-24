@@ -52,7 +52,9 @@ export default function Beds(props) {
   const [Connected, setConnected] = useState(false);
     
   useEffect(()=>{
-    const init = async()=>{await requestLocationPermission();}
+    const init = async()=>{await requestLocationPermission();
+
+    }
     if(Platform.OS=='android') {
         init();        
     // setBleStatus({emitter:"user",value:true});
