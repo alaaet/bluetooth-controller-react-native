@@ -33,7 +33,7 @@ const Mode = (props) => {
             }
             else 
             {
-            setSelectedModeId(item.id);
+           await setSelectedModeId(item.id);
             Toast.show({
               text1: 'Mode Alert:',
               text2:item.name+`  is Activated👋` 

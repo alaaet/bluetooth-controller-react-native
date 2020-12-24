@@ -49,6 +49,7 @@ export default function Beds(props) {
   const [bed, setBed] = useState({id:null,name:null,device:null});
   const navigation = useNavigation();
   const [showEmpty, setShowEmpty] = useState(false);
+  const [Connected, setConnected] = useState(false);
     
   useEffect(()=>{
     const init = async()=>{await requestLocationPermission();}
@@ -137,6 +138,7 @@ export default function Beds(props) {
                   {
                   setDeviceID(deviceId)
                   setBed({id:deviceId, name: "Bed A", device:Name })
+                  setConnected(true)
                   }
                 Toast.show({
                   text1: 'Controller',
@@ -223,6 +225,7 @@ export default function Beds(props) {
   //  manager.enable();
     setTimeout(() => {   scanAndConnect(); }, 1000);
     setShowEmpty(true);
+   setConnected(false);
    } 
   //////////////////////////
   const disconnect=async()=>{
@@ -230,6 +233,7 @@ export default function Beds(props) {
       console.log("disconnect respons",res)
     }).catch((e)=>{console.log("disconnect error",e)});
     await setBed({id:null,name:null,device:null});
+    
    }
    const bedEdit=()=>{
     navigation.navigate('Edit', {item:bed})
@@ -274,8 +278,8 @@ export default function Beds(props) {
       
         </View>
        
-        {devicesList.length>0&&<Subtitle title=" Available Devices" />}
-        {devicesList.length>0?(devicesList.map((device,index)=>renderItem(device,index))):showEmpty&&renderEmpty()}
+        {devicesList.length>0&&!Connected&&<Subtitle title=" Available Devices" />}
+        {devicesList.length>0?!Connected&&(devicesList.map((device,index)=>renderItem(device,index))):showEmpty&&renderEmpty()}
         {/* <FlatList 
           data={devicesList}
           ListEmptyComponent={() => renderEmpty()}

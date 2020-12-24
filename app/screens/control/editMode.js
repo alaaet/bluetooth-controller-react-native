@@ -56,7 +56,7 @@ const EditMode = (props) => {
                 <View style={styles.cardContentWrapper}>
                     <View style={styles.content}>
                          <Text style={{...styles.motorLabel,color:colors.text}}> Back motor</Text> 
-                         <CheckBox 
+                         { /* <CheckBox 
                             value={mode.motor1direction=="Up"}
                             onValueChange={()=>{
                                     setMode({...mode,motor1direction:"Up"});
@@ -65,21 +65,21 @@ const EditMode = (props) => {
                             tintColors={{ true: globalColors.blue, false: colors.text }}
                             />
 					    <Text style={{...styles.label,color:colors.text}}>Up</Text>
-                        <CheckBox 
+                       <CheckBox 
                             value={mode.motor1direction=="Down"}
                             onValueChange={()=>{
                                 setMode({...mode,motor1direction:"Down"});
                             }}
                             style={styles.checkbox}
                             tintColors={{ true: globalColors.blue, false: colors.text }}
-                            />
-					    <Text style={{...styles.label,color:colors.text}}>Down</Text>
+                        />
+					    <Text style={{...styles.label,color:colors.text}}>Down</Text>*/}
                     </View>
                     <View style={styles.slider}>
                         <Slider
                             value={mode.motor1scale}
                             onValueChange={(value) => setMode({...mode,motor1scale:value })}
-                            maximumValue={26}
+                            maximumValue={20}
                             minimumValue={0}
                             step={1}
                            minimumTrackTintColor={globalColors.blue}
@@ -93,7 +93,7 @@ const EditMode = (props) => {
                 <View style={styles.cardContentWrapper}>
                     <View style={styles.content}>
                          <Text style={{...styles.motorLabel,color:colors.text}}>Leg motor</Text> 
-                         <CheckBox 
+                         {/*<CheckBox 
                             value={mode.motor2direction=="Up"}
                             onValueChange={()=>{
                                 setMode({...mode,motor2direction:"Up"});
@@ -110,7 +110,7 @@ const EditMode = (props) => {
                             style={styles.checkbox}
                             tintColors={{ true: globalColors.blue, false: colors.text }}
                             />
-					    <Text style={{...styles.label,color:colors.text}}>Down</Text>
+					    <Text style={{...styles.label,color:colors.text}}>Down</Text>*/}
                     </View>
                     <View style={styles.slider}>
                         <Slider

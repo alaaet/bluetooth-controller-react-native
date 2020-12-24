@@ -23,10 +23,10 @@ const WEEKDAYS = [
     {name:"Sunday",dow:64,index:7}];
 
 const INITIALMODES=[
-    {id:"1",name:"Reading Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Up",motor2direction:"Up"},
-    {id:"2",name:"Sleep Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Down",motor2direction:"Down"},
-    {id:"3",name:"Relax Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Up",motor2direction:"Up"},
-    {id:"4",name:"Reset Mode",motor1scale:0 ,motor2scale:0,motor1direction:"Down",motor2direction:"Down",static:true},
+    {id:"1",name:"Reading Mode",motor1scale:0 ,motor2scale:0},
+    {id:"2",name:"Sleep Mode",motor1scale:0 ,motor2scale:0},
+    {id:"3",name:"Relax Mode",motor1scale:0 ,motor2scale:0},
+    {id:"4",name:"Reset Mode",motor1scale:0 ,motor2scale:0,static:true},
     ];
 
 const MOTOR_LATENCY = 500;
