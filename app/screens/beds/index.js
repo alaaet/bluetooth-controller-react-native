@@ -55,6 +55,13 @@ export default function Beds(props) {
     const init = async()=>{await requestLocationPermission();
 
     }
+    const bedInit = async()=>{
+      let bedFromStorage = await readBedFromStorage();
+      setBed(bedFromStorage);
+      console.log("bedFromStorage: ",await readBedFromStorage());
+
+    }
+     bedInit();
     if(Platform.OS=='android') {
         init();        
     // setBleStatus({emitter:"user",value:true});
@@ -65,6 +72,7 @@ export default function Beds(props) {
         console.log("edit return", modifiedBed)
         setTimeout(() => {
           setBed(modifiedBed);
+          
         }, 100);  
       }    
     });
@@ -145,6 +153,7 @@ export default function Beds(props) {
                 Toast.show({
                   text1: 'Controller',
                   text2:"Controller Connected Successfully.   👋"
+                  ,visibilityTime: 5000,
                   });
                 await device.discoverAllServicesAndCharacteristics();
                 return true;

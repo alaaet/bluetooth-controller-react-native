@@ -31,6 +31,7 @@ export default function CardWithButtons(props) {
         Toast.show({
           text1:  'Motor',
           text2: data+' '+'moving'+' '+direction+' '+icon
+          ,visibilityTime: 5000,
         });
         
       }
@@ -61,6 +62,7 @@ export default function CardWithButtons(props) {
               Toast.show({
                 text1: 'Error😯',
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
+                ,visibilityTime: 5000,
               });
               navigation.navigate('beds');
             }
@@ -81,6 +83,7 @@ export default function CardWithButtons(props) {
                 Toast.show({
                   text1: 'Error😯',
                   text2: 'No controller found, please connect to the controller using Bluetooth!'
+                  ,visibilityTime: 5000,
                 });
                 navigation.navigate('beds');
               }
@@ -120,6 +123,7 @@ export default function CardWithButtons(props) {
                 Toast.show({
                   text1: 'Error😯',
                   text2: 'No controller found, please connect to the controller using Bluetooth!'
+                  ,visibilityTime: 5000,
                 });
                 navigation.navigate('beds');
               }

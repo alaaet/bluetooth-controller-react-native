@@ -68,6 +68,7 @@ useEffect(()=>{
         Toast.show({
           text1: 'Alarm',
           text2:  `The alarm was dismissed! 👋`
+          ,visibilityTime: 5000,
         });
         stopAlarmSound();
       });
@@ -117,6 +118,7 @@ useEffect(()=>{
      Toast.show({
         text1: 'Error😯',
         text2: 'No controller found, please connect to the controller using Bluetooth!'
+        ,visibilityTime: 5000,
       });
       setTimeout(() => {
         navigation.navigate('beds');
@@ -137,6 +139,7 @@ useEffect(()=>{
       Toast.show({
         text1: 'Alarm',
         text2: 'Alarm deleted! 👋'
+        ,visibilityTime: 5000,
       });      
 		}
   };

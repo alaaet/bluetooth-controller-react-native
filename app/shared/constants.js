@@ -9,7 +9,6 @@ const PROGRAMS = [
 const FREQUENCIES = [
     { label: 'Once', value: 'Once' },
     { label: 'Daily', value: 'Daily' },
-    { label: 'Weekly', value: 'Weekly' },
     { label: 'Custom', value: 'Custom' },
 ];
 

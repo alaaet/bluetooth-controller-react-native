@@ -11,7 +11,7 @@ import {getDeviceIdFromStorage} from "../../utils/phoneStorage";
 
 
 const Mode = (props) => {
-  const {item,setSelectedModeId,selectedModeId} = props;
+  const {item,setSelectedModeId,selectedModeId,setSpinner} = props;
   const {colors} = useTheme();
   const navigation = useNavigation();
   return (
@@ -27,16 +27,19 @@ const Mode = (props) => {
               
               Toast.show({
                 text1: 'Error😯',
-                text2: 'No controller found, please connect to the controller using Bluetooth!'
+                text2: 'No controller found, please connect to the controller using Bluetooth!',
+                visibilityTime: 5000,
               });
               navigation.navigate('beds');
             }
             else 
             {
            await setSelectedModeId(item.id);
+           await setSpinner(true);
             Toast.show({
               text1: 'Mode Alert:',
               text2:item.name+`  is Activated👋` 
+              ,visibilityTime: 5000,
             });
             }
           
@@ -56,6 +59,7 @@ const Mode = (props) => {
               Toast.show({
                 text1: 'Error😯',
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
+                ,visibilityTime: 5000,
               });
               navigation.navigate('beds');
             }

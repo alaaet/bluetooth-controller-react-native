@@ -18,6 +18,7 @@ let alarmData = {
 	title: 'Smoothly Awake!',
 	message: 'Mattress is moving!',
 	vibrate: true,
+	vibration:[5000],
 	play_sound: true,
 	schedule_type: '',
 	channel: 'wakeup',
@@ -119,6 +120,8 @@ const AddAlarm = (props) => {
 				Toast.show({
 					text1: 'Error😯',
 					text2: e
+					,visibilityTime: 5000,
+					
 				});
 			}
 						

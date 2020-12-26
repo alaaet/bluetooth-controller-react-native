@@ -9,6 +9,7 @@ import { globalColors } from "../../styles/global";
 import {sendToPeripheral,createCommandFromString} from "../../utils/bleManager"
 import {decode as atob, encode as btoa} from 'base-64';
 import { BleManager } from "react-native-ble-plx";
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   MOVE_DUAL_HEAD_UP, MOVE_DUAL_HEAD_DOWN, MOVE_DUAL_LEGS_UP, MOVE_DUAL_LEGS_DOWN, MOVE_DUAL_BOTH_UP, MOVE_DUAL_BOTH_DOWN,MOTOR_LATENCY
 } from "../../shared/constants";
@@ -21,6 +22,7 @@ export default function Control() {
   const [currentModes,setCurrentModes] = useState([]);
   const [selectedModeId,setSelectedModeId] = useState(0);
   const [deviceId, setDeviceId] = useState("");
+  const [spinner, setSpinner] = useState(false);
   const isFocused = useIsFocused();
   const handleConnect=async(deviceId)=>{
     if(deviceId!==""){
@@ -143,6 +145,13 @@ useEffect(()=>{
         setSelectedModeId(0);
       }, MOTOR_LATENCY*53);
     }
+    else{
+      const mode = currentModes[selectedModeId-1];
+      setTimeout(() => {
+        setSelectedModeId(0);
+        setSpinner(false);
+      }, MOTOR_LATENCY*(53+mode.motor1scale+mode.motor2scale));
+    }
     
   }
   
@@ -182,14 +191,19 @@ const hexToBase64 = (str) =>
 }
 
   return (
-    <ScrollView   style={{...globalStyles.container, backgroundColor:colors.background}}>      
+    <ScrollView   style={{...globalStyles.container, backgroundColor:colors.background}}>  
+      <Spinner
+          visible={spinner}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <CardWithButtons icon={require("../../icons/Rectangle3-1.png")} message={" Back"} handleAction={moveMotor} btns={[MOVE_DUAL_HEAD_UP,MOVE_DUAL_HEAD_DOWN]}/>
       <CardWithButtons icon={require("../../icons/Rectangle2-1.png")} message={" Leg"} handleAction={moveMotor} btns={[MOVE_DUAL_LEGS_UP,MOVE_DUAL_LEGS_DOWN]}/>
       <CardWithButtons icon={require("../../icons/Rectangle1-1.png") } message={" Leg & Back"} handleAction={moveMotor} btns={[MOVE_DUAL_BOTH_UP,MOVE_DUAL_BOTH_DOWN]}/>
       
       <Text style={{...styles.title,color:colors.text}}>Modes</Text>
       <View style={{...globalStyles.container, paddingBottom:3,marginBottom:25,backgroundColor:colors.card}}>
-        {currentModes.map((item,index)=>(<Mode item={item} key={index} selectedModeId={selectedModeId} setSelectedModeId={setSelectedModeId}/>))}
+        {currentModes.map((item,index)=>(<Mode item={item} key={index}setSpinner={setSpinner} selectedModeId={selectedModeId} setSelectedModeId={setSelectedModeId}/>))}
       </View>
     </ScrollView >
   );
@@ -222,5 +236,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf:"center"
    
+  },
+  spinnerTextStyle: {
+    color: '#FFF'
   },
 });
