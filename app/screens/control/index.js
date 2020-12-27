@@ -72,6 +72,8 @@ export default function Control() {
   useEffect(()=>{
     const init= async()=>{
     setCurrentModes( await readModesFromStorage());
+    setDeviceId(await getDeviceIdFromStorage())
+    console.log("deviceId",await getDeviceIdFromStorage())
   }
   init();
   },[isFocused])
@@ -143,6 +145,8 @@ useEffect(()=>{
     if(selectedModeId==4){
       setTimeout(() => {
         setSelectedModeId(0);
+        setSpinner(false);
+
       }, MOTOR_LATENCY*53);
     }
     else{

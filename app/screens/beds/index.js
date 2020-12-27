@@ -13,7 +13,8 @@ import Empty from "../../components/empty";
 import {getDeviceIdFromStorage,saveDeviceIdToStorage,readBedFromStorage,saveBedToStorage} from "../../utils/phoneStorage";
 import Toast from 'react-native-toast-message';
 import {sendToPeripheral,hexToBase64,decimalToHex} from "../../utils/bleManager";
-import{START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,SET_TIME} from '../../shared/constants';
+import{START,END,TYPE,COMMAND,LENGTH1,LENGTH2,CHECKSUM,SET_TIME,DEVICE_STORAGE_KEY} from '../../shared/constants';
+import AsyncStorage from '@react-native-community/async-storage'
 import { bedService } from "../../services";
 export async function requestLocationPermission() {
   try {
@@ -38,8 +39,9 @@ export async function requestLocationPermission() {
     return false;
   }
 }
+const manager = new BleManager();
 export default function Beds(props) {
-  const manager = new BleManager();
+  
   const [bleStatus, setBleStatus] = useState({emitter:"",value:false});
   const [bleDevicePrevState, setBleDevicePrevState] = useState("");
   const {colors} = useTheme();
@@ -50,6 +52,7 @@ export default function Beds(props) {
   const navigation = useNavigation();
   const [showEmpty, setShowEmpty] = useState(false);
   const [Connected, setConnected] = useState(false);
+  const [poweredOff,setPoweredOff]=useState(true);
     
   useEffect(()=>{
     const init = async()=>{await requestLocationPermission();
@@ -147,9 +150,11 @@ export default function Beds(props) {
                   if(!existing)
                   {
                   setDeviceID(deviceId)
+                  await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(deviceId));
                   setBed({id:deviceId, name: "Bed A", device:Name })
                   setConnected(true)
                   }
+                  
                 Toast.show({
                   text1: 'Controller',
                   text2:"Controller Connected Successfully.   👋"
@@ -204,7 +209,19 @@ export default function Beds(props) {
         manager.startDeviceScan (null, null, async(error, device) => 
         {
           console.log("DEVICE:",device?.name)
-          if(error) console.log("ERROR:",error)
+          if(error){
+            console.log("ERROR:",error)
+            Toast.show({
+              text1: 'ERROR:',
+              text2: error+"  👋"
+              ,visibilityTime: 5000,
+              });
+              setPoweredOff(true);
+
+          } 
+          else{
+            setPoweredOff(false);
+          }
             if( device?.name?.toLowerCase().includes("octo"))
             {                
               setDevicesList(devicesList=>([...devicesList.filter(d => d.id !== device.id),{name:device.name,id:device.id}]))
@@ -219,7 +236,18 @@ export default function Beds(props) {
       manager.startDeviceScan (null, null, async(error, device) => 
         {
           console.log("DEVICE:",device?.name)
-          if(error) console.log("ERROR:",error)
+          if(error){
+            console.log("ERROR:",error)
+            Toast.show({
+              text1: 'Error:',
+              text2: "Bluetooth is powered off  👋"
+              ,visibilityTime: 5000,
+              });
+              setPoweredOff(true);
+          } 
+          else{
+            setPoweredOff(false);
+          }
             if(device?.name?.toLowerCase().includes("octo"))
             {                
               setDevicesList(devicesList=>([...devicesList.filter(d => d.id !== device.id),{name:device.name,id:device.id}]))
@@ -240,10 +268,13 @@ export default function Beds(props) {
    } 
   //////////////////////////
   const disconnect=async()=>{
-    let res= await manager.cancelDeviceConnection(deviceId).then((res)=>{
+     
+    let res= await manager.cancelDeviceConnection(deviceId)
+     
       console.log("disconnect respons",res)
-    }).catch((e)=>{console.log("disconnect error",e)});
+   
     await setBed({id:null,name:null,device:null});
+    await AsyncStorage.setItem(DEVICE_STORAGE_KEY,JSON.stringify(null));
     
    }
    const bedEdit=()=>{
@@ -288,15 +319,10 @@ export default function Beds(props) {
           { renderBed()}
       
         </View>
-       
-        {devicesList.length>0&&!Connected&&<Subtitle title=" Available Devices" />}
-        {devicesList.length>0?!Connected&&(devicesList.map((device,index)=>renderItem(device,index))):showEmpty&&renderEmpty()}
-        {/* <FlatList 
-          data={devicesList}
-          ListEmptyComponent={() => renderEmpty()}
-          renderItem={(item) => renderItem(item.item)}
-          keyExtractor={(item,index) => index.toString()}
-        /> */}
+      
+        {devicesList.length>0&&!Connected&&!poweredOff&&<Subtitle title=" Available Devices" />}
+        {devicesList.length>0?!Connected&&!poweredOff&&(devicesList.map((device,index)=>renderItem(device,index))): !poweredOff&&showEmpty&&renderEmpty()}
+    
     </ScrollView>
     </View>
   );

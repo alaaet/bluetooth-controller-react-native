@@ -64,7 +64,10 @@ export default function CardWithButtons(props) {
                 text2: 'No controller found, please connect to the controller using Bluetooth!'
                 ,visibilityTime: 5000,
               });
-              navigation.navigate('beds');
+              setTimeout(() => {
+                navigation.navigate('beds'); 
+              }, 200);
+              
             }
             else 
             {
@@ -85,7 +88,9 @@ export default function CardWithButtons(props) {
                   text2: 'No controller found, please connect to the controller using Bluetooth!'
                   ,visibilityTime: 5000,
                 });
-                navigation.navigate('beds');
+                setTimeout(() => {
+                  navigation.navigate('beds'); 
+                }, 200);
               }
               else 
               {
@@ -108,12 +113,29 @@ export default function CardWithButtons(props) {
           <Image style={styles.icon}source={icon} />
         </View>
         <View style={styles.arrowWrapper}>
-          <Pressable onPressIn={() =>
-          {
-            handleDown();
+          <Pressable onPressIn={async(e)=>{
+            let deviceID = await getDeviceIdFromStorage();
+            if(deviceID==null)
+            {
+              
+              Toast.show({
+                text1: 'Error😯',
+                text2: 'No controller found, please connect to the controller using Bluetooth!'
+                ,visibilityTime: 5000,
+              });
+              setTimeout(() => {
+                navigation.navigate('beds'); 
+              }, 200);
+              
+            }
+            else 
+            {
+              handleDown();
             ReactNativeHapticFeedback.trigger("impactHeavy", options);
             //Showtoast(message,Down)
-            }} onPressOut={(e) =>stopTimer()} 
+            }
+          }	}
+            onPressOut={(e) =>stopTimer()} 
             onPress={ 
               async()=>{
               let deviceID = await getDeviceIdFromStorage();
@@ -125,7 +147,9 @@ export default function CardWithButtons(props) {
                   text2: 'No controller found, please connect to the controller using Bluetooth!'
                   ,visibilityTime: 5000,
                 });
-                navigation.navigate('beds');
+                setTimeout(() => {
+                  navigation.navigate('beds'); 
+                }, 200);
               }
               else 
               {
