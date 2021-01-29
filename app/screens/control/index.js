@@ -25,7 +25,7 @@ export default function Control() {
   const [spinner, setSpinner] = useState(false);
   const isFocused = useIsFocused();
   const handleConnect=async(deviceId)=>{
-    if(deviceId!==""){
+    if(deviceId!==null){
       manager.isDeviceConnected(deviceId).then(async(isConnected)=>{
         console.log("CONNECTION CHECK RESULT: ", isConnected)
         if(!isConnected)
